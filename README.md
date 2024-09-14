@@ -41,8 +41,8 @@ This project serves as a fullstack starter template for building web application
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/yourusername/fullstack-starter.git
-   cd fullstack-starter
+   git clone https://github.com/yourusername/authenticationDemo.git
+   cd authenticationDemo
    ```
 
 2. Install dependencies:
