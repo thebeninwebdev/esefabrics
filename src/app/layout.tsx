@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+<<<<<<< HEAD
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -12,6 +13,16 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
   weight: "100 900",
 });
+=======
+import { Inter } from "next/font/google";
+import { AppWrapper } from "@/context";
+import "./globals.css";
+import {Toaster} from 'sonner'
+import {AuthProvider} from "./providers"
+
+
+const inter = Inter({ subsets: ["latin"] });
+>>>>>>> authenticationDemo/main
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,10 +36,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+<<<<<<< HEAD
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
+=======
+      <body className={inter.className}>
+        <AuthProvider>
+        <AppWrapper>
+        <div className="bg-white dark:bg-black">
+          {children}
+          <Toaster position="bottom-right"/>
+        </div>
+        </AppWrapper>
+        </AuthProvider>
+>>>>>>> authenticationDemo/main
       </body>
     </html>
   );

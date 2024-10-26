@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Image from "next/image";
 
 export default function Home() {
@@ -99,3 +100,10 @@ export default function Home() {
     </div>
   );
 }
+=======
+export default function Home() {
+  return (
+    <main>page</main>
+  );
+}
+>>>>>>> authenticationDemo/main
