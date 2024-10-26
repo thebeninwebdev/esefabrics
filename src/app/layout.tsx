@@ -23,7 +23,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
         <AppWrapper>
-        <div>
+        <div className="bg-white dark:bg-black">
           {children}
           <Toaster position="bottom-right"/>
         </div>
