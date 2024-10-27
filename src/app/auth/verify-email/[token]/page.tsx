@@ -1,18 +1,15 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {motion} from 'framer-motion'
+import { motion } from 'framer-motion';
 import { toast } from 'sonner'; // Sonner for toasts
 import { FaSpinner } from 'react-icons/fa';
 
-interface VerifyTokenPageProps {
-  params: {
-    token: string;
-  };
-}
+// Change this to handle params as a promise
+type TParams = Promise<{ token: string }>;
 
-export default function VerifyTokenPage({ params }: VerifyTokenPageProps) {
-  const { token } = params; // Get the token from the URL
+export default async function VerifyTokenPage({ params }: { params: TParams }) {
+  const { token } = await params; // Await the params to get the token
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isTokenValid, setIsTokenValid] = useState<boolean>(false);
@@ -36,7 +33,7 @@ export default function VerifyTokenPage({ params }: VerifyTokenPageProps) {
         } else {
           setIsTokenValid(true);
           toast.success('Token verified, confirming your account...');
-          confirmAccount(); // Call the confirm account function
+          await confirmAccount(); // Wait for confirmation before proceeding
         }
       } catch (error) {
         setError('An error occurred while verifying the token');
@@ -99,18 +96,19 @@ export default function VerifyTokenPage({ params }: VerifyTokenPageProps) {
           <div className="text-center">
             <p className="text-red-500 text-xl">{error}</p>
             <motion.button
-              whileHover={{scale: 1.1}}
-              whileTap={{scale: 0.9}}
-              className={
-                `btn dark:bg-primary-dark bg-primary w-[90%] mx-[5%] hover:opacity-90 transition-opacity duration-300 ${loading?"cursor-not-allowed rounded-full":"cursor-pointer rounded-md"}  text-sm py-2 mt-2`
-              } 
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className={`
+                btn dark:bg-primary-dark bg-primary w-[90%] mx-[5%] 
+                hover:opacity-90 transition-opacity duration-300 
+                ${loading ? "cursor-not-allowed rounded-full" : "cursor-pointer rounded-md"} 
+                text-sm py-2 mt-2
+              `}
               onClick={requestNewToken}
               disabled={loading}
-              >
-                        {!loading?"New token":<div className='w-full flex justify-center'>
-          <FaSpinner className='w-5 h-5 animate-spin'/>
-          </div>}
-                      </motion.button>
+            >
+              {!loading ? "New token" : <div className='w-full flex justify-center'><FaSpinner className='w-5 h-5 animate-spin' /></div>}
+            </motion.button>
           </div>
         ) : isTokenValid ? (
           <p className="text-center text-green-500">Confirming your account...</p>
