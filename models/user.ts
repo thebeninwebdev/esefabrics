@@ -1,18 +1,24 @@
 import {Schema, model, models, Document} from 'mongoose'
 
 interface IUser extends Document {
+    name: string;
     email: string;
+    phone: string;
+    created_at: Date;
+    updated_at?: Date;
+    last_login: Date;
+    bio?: string;
     password: string;
-    roles: string[]; // Array of roles, e.g., ['admin', 'user']
-    verified: boolean;
     username: string;
-    verifyToken:string;
-    verifyTokenExpiry:string;
-    resetToken:string;
-    resetTokenExpiry:string;
+    roles: string[];
+    verifyToken?: string;
+    verifyTokenExpiry?: string;
+    resetToken?: string;
+    resetTokenExpiry?: string;
+    verified: boolean;
   }
 
-const UserSchema:Schema = new Schema({
+const UserSchema = new Schema<IUser>({
     name: {
         type: String,
         required: true
@@ -21,6 +27,17 @@ const UserSchema:Schema = new Schema({
         type: String,
         required: true
     },
+    phone: {
+        type: String,
+        required: true
+    },
+    created_at: {
+        type: Date,
+        required: true
+    },
+    updated_at: Date,
+    last_login: Date,
+    bio: String,
     password: {
         type: String,
         required: true

@@ -24,6 +24,10 @@ export const authOptions:NextAuthOptions = {
 
             if(!user) return null
 
+            user.last_login = new Date()
+            
+            await user.save()
+            
             if(!user.verified) return null
   
             const matchPassword = await bcrypt.compare(password, user.password)

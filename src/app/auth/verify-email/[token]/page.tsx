@@ -1,15 +1,14 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner'; // Sonner for toasts
 import { FaSpinner } from 'react-icons/fa';
 
-// Change this to handle params as a promise
-type TParams = Promise<{ token: string }>;
+// Unwrap the params promise using React's `use`
+export default function VerifyTokenPage({ params }: { params: Promise<{ token: string }> }) {
+  const { token } = use(params); // Use `use` to unwrap params and access token directly
 
-export default async function VerifyTokenPage({ params }: { params: TParams }) {
-  const { token } = await params; // Await the params to get the token
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isTokenValid, setIsTokenValid] = useState<boolean>(false);

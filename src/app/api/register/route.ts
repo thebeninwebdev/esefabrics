@@ -10,11 +10,12 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req:Request){
     try{
-        const {name, email, password, username } = await req.json()
+        const {name, email, password, username, phoneNumber } = await req.json()
 
         await connectMongoDB()
 
-        if(!name || !email || !password || !username){
+        if(!name || !email || !password || !username || !phoneNumber){
+            console.log(name,email,password,username, phoneNumber)
             return NextResponse.json(
                 {message:"All fields are required"},
                 {status: 400}
@@ -34,7 +35,16 @@ export async function POST(req:Request){
         }
 
         const hashedPassword = await bcrypt.hash(password, 12)
-        const user = await User.create({name, email, password:hashedPassword, username, roles:process.env.USER})
+        const user = await User.create
+        ({
+            name, 
+            email, 
+            password:hashedPassword, 
+            username, 
+            roles:process.env.USER,
+            created_at:new Date(),
+            phone:phoneNumber
+        })
 
         const verifyToken = await crypto.randomBytes(20).toString('hex')
 

@@ -4,6 +4,7 @@ import { AppWrapper } from "@/context";
 import "./globals.css";
 import {Toaster} from 'sonner'
 import {AuthProvider} from "./providers"
+import BottomNav from "@/components/BottomNav";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -23,11 +24,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className + " bg-white dark:bg-black text-text dark:text-text-dark"}>
+      <body className={inter.className + " bg-[#f5f5f5] dark:bg-[#1a1a1a] text-text dark:text-text-dark"}>
         <AuthProvider>
         <AppWrapper>
         <div>
           {children}
+          <BottomNav/>
           <Toaster position="bottom-right"/>
         </div>
         </AppWrapper>
