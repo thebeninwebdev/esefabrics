@@ -116,7 +116,11 @@ export default function Register() {
                 <span>Password</span>
               </label>
               <div className='relative'>
-                <input type={showPassword ? "text" : "password"} placeholder={showPassword ? "password" : "--------"} className={`border-2 p-2 rounded-md border-complement dark:border-complement-dark outline-none placeholder:text-text tracking-widest ${!showPassword && "placeholder:text-lg"} dark:placeholder:text-text-dark dark:bg-transparent w-full`} required value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input 
+                type={showPassword ? "text" : "password"} 
+                placeholder={showPassword ? "password" : "--------"} 
+                autoComplete='new-password'
+                className={`border-2 p-2 rounded-md border-complement dark:border-complement-dark outline-none placeholder:text-text tracking-widest ${!showPassword && "placeholder:text-lg"} dark:placeholder:text-text-dark dark:bg-transparent w-full`} required value={password} onChange={(e) => setPassword(e.target.value)} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-textlight dark:text-text-dark focus:outline-none">
                   {showPassword ? <GoEyeClosed className='w-4 h-4' /> : <GoEye className='w-4 h-4' />}
                 </button>

@@ -3,11 +3,13 @@ import { Inter } from "next/font/google";
 import { AppWrapper } from "@/context";
 import "./globals.css";
 import {Toaster} from 'sonner'
-import {AuthProvider} from "./providers"
 import BottomNav from "@/components/BottomNav";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { ThemeProvider } from "next-themes";
 
 
 const inter = Inter({ subsets: ["latin"] });
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,16 +24,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
-    <html lang="en">
-      <body className={inter.className + " bg-[#f5f5f5] dark:bg-[#1a1a1a] text-text dark:text-text-dark"}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
         <AuthProvider>
         <AppWrapper>
-        <div>
+        <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange>
+        <div className="text-text dark:text-text-dark w-full h-full text bg-background dark:bg-background-dark">
           {children}
+        </div>
           <BottomNav/>
           <Toaster position="bottom-right"/>
-        </div>
+        
+        </ThemeProvider>
         </AppWrapper>
         </AuthProvider>
       </body>

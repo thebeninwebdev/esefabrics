@@ -3,7 +3,8 @@
 import React from 'react';
 
 import Link from 'next/link';
-import { CiShop, CiHeart, CiShoppingCart, CiUser, CiSearch } from 'react-icons/ci';
+import { usePathname } from 'next/navigation';
+import { CiShop, CiHeart, CiUser, CiSearch } from 'react-icons/ci';
 
 import useNavigation from '@/hook/use-navigation';
 import useScrollingEffect from '@/hook/use-scroll';
@@ -11,6 +12,13 @@ import useScrollingEffect from '@/hook/use-scroll';
 const BottomNav = () => {
   const scrollDirection = useScrollingEffect(); // Use the custom hook
   const navClass = scrollDirection === 'up' ? '' : 'opacity-25 duration-500';
+  const pathname: string = usePathname()
+
+   // Check if the path starts with `/auth`
+   const isAuthRoute = pathname.startsWith('/auth');
+
+  // Return null to hide the menu on auth routes
+  if (isAuthRoute) return null;
 
   const {
     isHomeActive,

@@ -187,6 +187,7 @@ export default function Authentication() {
               type={showPassword ? "text" : "password"}
           placeholder={showPassword?"password":"--------"}
           className={`border-2 p-2 rounded-md border-complement dark:border-complement-dark outline-none placeholder:text-text tracking-widest  dark:placeholder:text-text-dark dark:bg-transparent w-full ${!showPassword&&"placeholder:text-lg"}`}
+          autoComplete='current-password'
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -199,7 +200,6 @@ export default function Authentication() {
           {showPassword ? <GoEyeClosed  className='w-4 h-4'/> : <GoEye className='w-4 h-4'/>}
         </button>
               </div>
-
               <div className="flex justify-between w-full pt-2">
               <div className="mt-2 ">
                 <Link href="/auth/register"  className="mt-2 hover:underline text-textlight text-xs cursor-pointer">

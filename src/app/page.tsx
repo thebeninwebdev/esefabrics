@@ -1,5 +1,6 @@
+import ThemeSwitch from "@/components/Themeswitch";
 export default function Home() {
   return (
-    <main >page</main>
+    <main className="bg-transparent">page</main>
   );
 }

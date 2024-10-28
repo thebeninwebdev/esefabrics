@@ -8,5 +8,5 @@ interface Props{
 }
 
 export const AuthProvider: React.FC<Props> = ({children}) => {
-    return <SessionProvider>{children}</SessionProvider>
+    return <SessionProvider> {children} </SessionProvider>
 }
