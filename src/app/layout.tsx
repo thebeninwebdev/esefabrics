@@ -6,6 +6,7 @@ import {Toaster} from 'sonner'
 import BottomNav from "@/components/BottomNav";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ThemeProvider } from "next-themes";
+import Header from "@/components/Header";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,6 +36,7 @@ export default function RootLayout({
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange>
+          <Header/>
         <div className="text-text dark:text-text-dark w-full h-full text bg-background dark:bg-background-dark">
           {children}
         </div>

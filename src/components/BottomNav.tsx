@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CiShop, CiHeart, CiUser, CiSearch } from 'react-icons/ci';
 
-import useNavigation from '@/hook/use-navigation';
-import useScrollingEffect from '@/hook/use-scroll';
+import useNavigation from '@/hooks/use-navigation';
+import useScrollingEffect from '@/hooks/use-scrolling-effect';
+import { useAppContext } from '@/context';
 
 const BottomNav = () => {
   const scrollDirection = useScrollingEffect(); // Use the custom hook
@@ -26,10 +27,11 @@ const BottomNav = () => {
     isSearchActive,
     isDashboardActive
   } = useNavigation();
+  const {isOpen} = useAppContext()
 
   return (
-    <div
-      className={`fixed bottom-0 w-full py-4 z-10 bg-zinc-100 dark:bg-zinc-950 border-t dark:border-zinc-800 border-zinc-200 shadow-lg sm:hidden ${navClass} text-accent dark:text-accent-dark`}
+    <>{!isOpen && <div
+      className={`fixed bottom-0 w-full py-4 bg-zinc-100 dark:bg-zinc-950 border-t dark:border-zinc-800 border-zinc-200 shadow-lg sm:hidden ${navClass} text-accent dark:text-accent-dark z-10`}
     >
       <div className="flex flex-row justify-around items-center bg-transparent w-full">
         <Link href="/" className="flex items-center relative">
@@ -63,7 +65,7 @@ const BottomNav = () => {
           )}
         </Link>
       </div>
-    </div>
+    </div>}</>
   );
 };
 
