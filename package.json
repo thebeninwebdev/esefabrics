@@ -10,10 +10,15 @@
   },
   "dependencies": {
     "@iconify/react": "^5.0.2",
+    "@radix-ui/react-slot": "^1.1.0",
     "@types/bcryptjs": "^2.4.6",
     "bcryptjs": "^2.4.3",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "embla-carousel-autoplay": "^8.3.1",
+    "embla-carousel-react": "^8.3.1",
     "framer-motion": "^11.11.10",
+    "lucide-react": "^0.454.0",
     "mongoose": "^8.6.1",
     "next": "15",
     "next-auth": "^4.24.7",
@@ -24,7 +29,8 @@
     "react-phone-input-2": "^2.15.1",
     "resend": "^4.0.0",
     "sonner": "^1.5.0",
-    "tailwind-merge": "^2.5.4"
+    "tailwind-merge": "^2.5.4",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20",

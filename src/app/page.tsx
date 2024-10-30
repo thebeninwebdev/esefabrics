@@ -1,5 +1,9 @@
+import { HomeSlider } from "@/components/HomeSlider";
+
 export default function Home() {
   return (
-    <main>page</main>
+    <main className="pt-[63.99px]">
+<HomeSlider/>
+    </main>
   );
 }

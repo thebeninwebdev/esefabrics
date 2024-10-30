@@ -1,3 +1,5 @@
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 import { CiBag1, CiBoxes, CiClock1, CiCoinInsert, CiDeliveryTruck, CiFileOn, CiMap, CiMemoPad, CiShoppingCart, CiTrash, CiUnlock, CiViewList } from "react-icons/ci";
 
 export const Menus = [
@@ -96,3 +98,7 @@ export const Menus = [
     name: "Contact",
   },
 ];
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}

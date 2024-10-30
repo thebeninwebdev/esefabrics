@@ -112,7 +112,7 @@ export default function Authentication() {
       </div>
       <div className='max-w-md w-full px-10 py-20 flex flex-col justify-center mx-auto'>
       {resetPassword === "true" && 
-      <div className='relative top-0 left-0 z-50 pb-10 cursor-pointer flex gap-2 items-center' onClick={() =>     router.push("?reset=false",
+      <div className='relative top-0 left-0 pb-10 cursor-pointer flex gap-2 items-center' onClick={() =>     router.push("?reset=false",
         {
           scroll:false
         }
@@ -186,7 +186,7 @@ export default function Authentication() {
               <input
               type={showPassword ? "text" : "password"}
           placeholder={showPassword?"password":"--------"}
-          className={`border-2 p-2 rounded-md border-complement dark:border-complement-dark outline-none placeholder:text-text tracking-widest  dark:placeholder:text-text-dark dark:bg-transparent w-full ${!showPassword&&"placeholder:text-lg"}`}
+          className={`border-2 p-2 rounded-md border-complement dark:border-complement-dark outline-none placeholder:text-text tracking-widest  dark:placeholder:text-text-dark dark:bg-transparent w-full ${!showPassword&&"placeholder:text-lg"} bg-transparent`}
           autoComplete='current-password'
           required
           value={password}
