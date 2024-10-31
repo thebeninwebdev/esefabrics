@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react'
 import { useTheme } from 'next-themes'
 import Image from "next/image"
-import { CiSun, CiCloudMoon} from "react-icons/ci"
+import { RxHalf2 } from 'react-icons/rx'
 
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false)
@@ -27,12 +27,10 @@ export default function ThemeSwitch() {
     />
   )
 
-  if (resolvedTheme === 'dark') {
-    return <CiSun onClick={() => setTheme('light')} />
-  }
-
-  if (resolvedTheme === 'light') {
-    return <CiCloudMoon onClick={() => setTheme('dark')} />
-  }
+  
+    return  (<button className=''><RxHalf2 className='w-5 h-5' onClick={() => setTheme(
+      resolvedTheme === 'light'?'dark':'light'
+    )} /></button>)
+  
 
 }

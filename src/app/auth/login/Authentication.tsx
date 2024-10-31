@@ -60,7 +60,7 @@ export default function Authentication() {
         } else {
           toast.success('Login successful');
         }
-        router.push('/dashboard') // Redirect to dashboard or another page
+        setTimeout(() => router.push('/dashboard'), 0);// Redirect to dashboard
         toast.success("Login successful")
         setEmail("")
         setPassword("")

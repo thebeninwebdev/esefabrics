@@ -53,7 +53,7 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    if (!name || !email || !password || !username) {
+    if (!name || !email || !password || !username || !phoneNumber) {
       toast.error("All Fields are required")
       return
     }
@@ -61,7 +61,7 @@ export default function Register() {
       const response = await fetch('/api/register', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password, username })
+        body: JSON.stringify({ name, email, password, username, phoneNumber })
       })
 
       const data = await response.json()

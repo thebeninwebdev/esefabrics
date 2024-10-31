@@ -1,3 +1,5 @@
+import { Document } from "mongoose";
+
 // Define a type for the sub-menu items
 interface SubMenuItem {
     name: string; // Name of the sub-menu item
@@ -5,10 +7,38 @@ interface SubMenuItem {
     icon: React.ElementType; // Icon component type
   }
   
-  // Define a type for the main menu item
+  //type for the product image
+  export interface IImage {
+    url: string;
+    color?: string;
+    size?: string;
+  }
+  
+  // type for the main menu item
  export interface MainMenuItem {
-    name: string; // Name of the main menu item
-    subMenuHeading?: string[]; // Headings for the sub-menus
-    subMenu?: SubMenuItem[]; // Array of sub-menu items
-    gridCols?: number; // Number of grid columns
+    name: string; 
+    subMenuHeading?: string[]; 
+    subMenu?: SubMenuItem[]; 
+    gridCols?: number; 
+  }
+  
+  //type for product
+  export interface IProduct extends Document {
+    name: string;
+    description: string;
+    price: number;
+    slug: string;
+    brand: string;
+    stock: number;
+    categories: string[];
+    rating: number;
+    numReviews: number;
+    images: IImage[];
+    variants: {
+      size: string;
+      color: string;
+      stock: number;
+    }[];
+    createdAt: Date;
+    updatedAt: Date;
   }

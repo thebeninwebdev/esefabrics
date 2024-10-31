@@ -32,7 +32,7 @@ export const MobMenu = () => {
         {isOpen ? <RiCloseFill className="w-7 h-7 mt-1" /> : <RiMenu2Line className="w-6 h-6 mt-1" />}
       </button>
       <motion.div
-        className="fixed z-50 left-0 right-0 top-16 overflow-y-auto h-full bg-[#1a1a1a] backdrop-blur text-white p-6 pb-20"
+        className="fixed z-50 left-0 right-0 top-16 overflow-y-auto h-full bg-background dark:bg-background-dark backdrop-blur p-6 pb-20"
         initial={{ x: "-100%" }}
         animate={{ x: isOpen ? "0%" : "-100%" }}
       >

@@ -30,7 +30,7 @@ export function HomeSlider() {
       <CarouselContent>
         {Array.from({ length: 3 }).map((_, index) => (
           <CarouselItem key={index}>
-              <div key={index} className="relative w-full h-screen overflow-hidden">
+              <div key={index} className="relative w-full overflow-hidden h-[calc(100vh_-_200px)]">
           <Image
             src={banners[index].src}
             alt={banners[index].alt}
@@ -38,7 +38,7 @@ export function HomeSlider() {
             height={1280}
             className="object-cover w-full h-full"
             priority
-            style={{objectPosition: '15% center'}}
+            style={{objectPosition: '15% 15%'}}
           />
           <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
             <h2 className="text-white text-4xl md:text-6xl font-extrabold uppercase tracking-widest">

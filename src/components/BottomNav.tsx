@@ -3,7 +3,6 @@
 import React from 'react';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { CiShop, CiHeart, CiUser, CiSearch } from 'react-icons/ci';
 
 import useNavigation from '@/hooks/use-navigation';
@@ -13,13 +12,6 @@ import { useAppContext } from '@/context';
 const BottomNav = () => {
   const scrollDirection = useScrollingEffect(); // Use the custom hook
   const navClass = scrollDirection === 'up' ? '' : 'opacity-25 duration-500';
-  const pathname: string = usePathname()
-
-   // Check if the path starts with `/auth`
-   const isAuthRoute = pathname.startsWith('/auth');
-
-  // Return null to hide the menu on auth routes
-  if (isAuthRoute) return null;
 
   const {
     isHomeActive,
@@ -31,7 +23,7 @@ const BottomNav = () => {
 
   return (
     <>{!isOpen && <div
-      className={`fixed bottom-0 w-full py-4 bg-zinc-100 dark:bg-zinc-950 border-t dark:border-zinc-800 border-zinc-200 shadow-lg sm:hidden ${navClass} text-accent dark:text-accent-dark z-10`}
+      className={`fixed bottom-0 w-full py-4 bg-zinc-100 dark:bg-zinc-950 border-t dark:border-zinc-800 border-zinc-200 shadow-lg sm:hidden ${navClass} text-complement dark:text-complement-dark z-10`}
     >
       <div className="flex flex-row justify-around items-center bg-transparent w-full">
         <Link href="/" className="flex items-center relative">

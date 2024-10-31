@@ -4,6 +4,7 @@ import { AppWrapper } from "@/context";
 import "./globals.css";
 import {Toaster} from 'sonner'
 import BottomNav from "@/components/BottomNav";
+import Wrapper from "@/components/Wrapper";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ThemeProvider } from "next-themes";
 import Header from "@/components/Header";
@@ -28,7 +29,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter.className+ "bg-background dark:bg-background-dark"}>
         <AuthProvider>
         <AppWrapper>
         <ThemeProvider
@@ -36,11 +37,16 @@ export default function RootLayout({
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange>
+          <Wrapper path="/admin">
           <Header/>
+          </Wrapper>
+          
         <div className="text-text dark:text-text-dark w-full h-full text bg-background dark:bg-background-dark">
           {children}
         </div>
-          <BottomNav/>
+        <Wrapper path="/auth">
+        <BottomNav/>
+        </Wrapper>
           <Toaster position="bottom-right"/>
         
         </ThemeProvider>

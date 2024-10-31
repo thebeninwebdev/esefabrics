@@ -1,30 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
-interface IImage {
-  url: string;
-  color?: string;
-  size?: string;
-}
-
-interface IProduct extends Document {
-  name: string;
-  description: string;
-  price: number;
-  slug: string;
-  brand: string;
-  stock: number;
-  categories: string[];
-  rating: number;
-  numReviews: number;
-  images: IImage[];
-  variants: {
-    size: string;
-    color: string;
-    stock: number;
-  }[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { IProduct, IImage } from '@/app/types';
 
 const ImageSchema = new Schema<IImage>({
   url: { type: String, required: true },

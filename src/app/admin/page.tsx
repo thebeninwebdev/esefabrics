@@ -1,7 +1,14 @@
-import React from 'react'
+'use client'
 
-export default function page() {
+import React from 'react'
+import { signOut } from 'next-auth/react'
+import { NewProductForm } from '@/components/NewProductForm'
+
+export default function AdminPage() {
   return (
-    <div>page</div>
+    <div>Admin page 
+      <button onClick={() => signOut()}>sign out</button>
+      <NewProductForm/>
+      </div>
   )
 }
