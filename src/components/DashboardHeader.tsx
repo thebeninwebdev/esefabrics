@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 
 import Link from 'next/link';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { signOut } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { NavItems } from '@/config';
 import { Menu } from 'lucide-react';
 
@@ -29,8 +30,8 @@ export default function Header() {
         className="flex items-center gap-2 text-lg font-semibold md:text-base"
         prefetch={false}
       >
-        <span className="w-8 h-8 border bg-accent rounded-full" />
-        <span>Acme Inc</span>
+        <span className="w-8 h-8 border bg-complement dark:bg-complement-dark rounded-full" />
+        <span>Admin Dashboard</span>
       </Link>
 
       <div className="ml-4 flex items-center gap-3">
@@ -41,12 +42,8 @@ export default function Header() {
               size="icon"
               className="overflow-hidden rounded-full"
             >
-              <Avatar>
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback>CN</AvatarFallback>
+              <Avatar>  
+                <AvatarFallback>AD</AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
@@ -54,9 +51,9 @@ export default function Header() {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuItem><Link href="https://mreseosa.com/">Support</Link></DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
 
@@ -65,7 +62,8 @@ export default function Header() {
         </button>
 
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetContent side="right" className='block md:hidden'>
+          <SheetContent side="right" className='block md:hidden bg-background dark:bg-background-dark'>
+            <SheetTitle>Menu</SheetTitle>
             <div className="pt-4  overflow-y-auto h-fit w-full flex flex-col gap-1">
               {navItems.map((navItem, idx) => (
                 <Link

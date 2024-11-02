@@ -11,7 +11,8 @@ const ProductSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
-    price: { type: Number, required: true },
+    retailPrice: {type: Number, required: true},
+    discountedPrice: { type: Number, required: true },
     slug: { type: String, required: true, unique: true },
     brand: { type: String, required: true },
     stock: { type: Number, required: true },

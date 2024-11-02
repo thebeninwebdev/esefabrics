@@ -26,7 +26,8 @@ interface SubMenuItem {
   export interface IProduct extends Document {
     name: string;
     description: string;
-    price: number;
+    retailPrice: number;
+    discountedPrice: number;
     slug: string;
     brand: string;
     stock: number;

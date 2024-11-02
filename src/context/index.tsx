@@ -1,5 +1,6 @@
 "use client"
 
+import { DELETE } from '@/app/api/category/route';
 import React, {createContext, useContext, useState} from 'react'
 
 const AppContext = createContext<any>(undefined)
@@ -10,10 +11,25 @@ export function AppWrapper({children}: {
 
     const EMAIL:string = "osayivictoryeseosa@gmail.com"
     const COMPANY_NAME:string = "mrEseosa_"
+    const [categories, setCategories] = useState([])
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
+    const fetchCategories = async () => {
+        try {
+           const response = await fetch('/api/category') 
+
+           if(!response.ok){
+            console.log('failed to fetch categories')
+           }
+
+           const data = await response.json()
+           setCategories(data.categories)
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories}}>
             {children}
         </AppContext.Provider>
     )
