@@ -12,23 +12,23 @@ export const NavItems = () => {
   return [
     {
       name: 'Home',
-      href: '/',
+      href: '/dashboard',
       icon: <Home size={20} />,
+      active: isNavItemActive(pathname, '/dashboard'),
+      position: 'top',
+    },
+    {
+      name: 'Products',
+      href: '/',
+      icon: <User size={20} />,
       active: pathname === '/',
       position: 'top',
     },
     {
-      name: 'Profile',
-      href: '/profile',
-      icon: <User size={20} />,
-      active: isNavItemActive(pathname, '/profile'),
-      position: 'top',
-    },
-    {
-      name: 'Notifications',
-      href: '/notifications',
+      name: 'Categories',
+      href: '/categories',
       icon: <Bell size={20} />,
-      active: isNavItemActive(pathname, '/notifications'),
+      active: isNavItemActive(pathname, '/categories'),
       position: 'top',
     },
     {
@@ -37,13 +37,6 @@ export const NavItems = () => {
       icon: <Briefcase size={20} />,
       active: isNavItemActive(pathname, '/projects'),
       position: 'top',
-    },
-    {
-      name: 'Settings',
-      href: '/settings',
-      icon: <Settings size={20} />,
-      active: isNavItemActive(pathname, '/settings'),
-      position: 'bottom',
     },
   ];
 };

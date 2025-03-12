@@ -9,9 +9,9 @@ interface SubMenuItem {
   
   //type for the product image
   export interface IImage {
+    id: string;
     url: string;
     color?: string;
-    size?: string;
   }
   
   // type for the main menu item

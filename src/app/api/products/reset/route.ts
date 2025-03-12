@@ -1,5 +1,5 @@
-import User from "../../../../models/user";
-import { connectMongoDB } from "../../../../utils/database";
+import User from "../../../../../models/user";
+import { connectMongoDB } from "../../../../../utils/database";
 import crypto from 'crypto'
 import { NextResponse } from "next/server";
 import { EmailTemplate } from "@/components/ResetPasswordEmailTemplate";

@@ -1,0 +1,6 @@
+tools and logins
+cloudinary - osayieseosa836@gmail.com
+mongodb - use google and use the osayivictoryeseosa@gmail.com
+
+tasks
+- add a image file input field to the admin categories page

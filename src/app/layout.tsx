@@ -40,7 +40,9 @@ export default function RootLayout({
           <Wrapper path="/admin">
           <Header/>
           </Wrapper>
+        <div>
           
+        </div>
         <div className="text-text dark:text-text-dark w-full h-full text bg-background dark:bg-background-dark">
           {children}
         </div>
@@ -48,7 +50,6 @@ export default function RootLayout({
         <BottomNav/>
         </Wrapper>
           <Toaster position="bottom-right"/>
-        
         </ThemeProvider>
         </AppWrapper>
         </AuthProvider>

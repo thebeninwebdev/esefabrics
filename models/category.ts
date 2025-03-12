@@ -3,10 +3,15 @@ import {Schema, model, models, Document} from 'mongoose'
 
 interface ICategories extends Document {
     category: string;
+    image: string
   }
 
 const CategoriesSchema = new Schema<ICategories>({
     category: {
+        type: String,
+        required: true
+    },
+    image: {
         type: String,
         required: true
     }

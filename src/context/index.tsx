@@ -13,6 +13,7 @@ export function AppWrapper({children}: {
     const COMPANY_NAME:string = "mrEseosa_"
     const [categories, setCategories] = useState([])
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [variants, setVariants] = useState([])
 
     const fetchCategories = async () => {
         try {
@@ -28,8 +29,24 @@ export function AppWrapper({children}: {
             console.log(error)
         }
     }
+
+    const fetchVariants = async () => {
+        try {
+           const response = await fetch('/api/variants') 
+
+           if(!response.ok){
+            console.log('failed to fetch categories')
+           }
+
+           const data = await response.json()
+           setVariants(data.variants)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants}}>
             {children}
         </AppContext.Provider>
     )

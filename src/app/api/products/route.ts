@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import Categories from "../../../../models/category";
+import Product from "../../../../models/product";
 import { connectMongoDB } from "../../../../utils/database";
-import { UploadApiResponse } from "cloudinary";
 import {v2 as cloudinary} from 'cloudinary'
 
 cloudinary.config({
@@ -10,73 +9,65 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-//Handle GET requests to fetch all categories
+//Handle GET requests to fetch all products
 export async function GET(req: Request){
     try {
         await connectMongoDB();
 
-        const categories = await Categories.find() //Fetch all categories
-        return NextResponse.json({ categories}, { status: 200 })
+        const  products = await Product.find() //Fetch all products
+        return NextResponse.json({ products}, { status: 200 })
     } catch (error) {
         console.error('Error fetching categories: ', error)
         return NextResponse.json(
             { message: 'An error occured while fetching categories' },
             { status: 500 }
-        )
-    }
-}
+)}}
 
-//Handle POST requests to create a category
-export const POST = async (request: Request) => {
+//Handle POST request to create a product item
+    export const POST = async (req: Request) => {
+
     try {
-        //Parse the incoming formData request
-        const formData = await request.formData();
-        const category = formData.get("category");
-        const image = formData.get("image");
+        //Parse the incoming JSON request
+        const {name, description, brand, retailPrice, discountedPrice, stock, categories, images} = await req.json()
 
-        if (!image) {
-            throw new Error("No image file provided.");
-          }
-          
-          if (!(image instanceof File)) {
-            throw new Error("Expected a file but got a string.");
-          }
-          
-          const photoBuffer = await image.arrayBuffer();
-          const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-            cloudinary.uploader.upload_stream(
-                {resource_type: "auto", folder: "categories"},
-                (error, result) => {
-                    if (error || !result) reject(error)
-                    else resolve(result)
-                }
-            ).end(Buffer.from(photoBuffer))
-          })
+        console.log(name, description, brand, retailPrice, discountedPrice, stock, categories, images)
 
         //Validate the input
-        if(!category || typeof category !== 'string' || category.trim().length === 0){
+        if(!name || !description || !brand || !retailPrice || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images){
             return NextResponse.json(
-                {message: 'Category is required and must be a valid string'},
+                {message: 'All fields are required'},
                 {status: 400}
             )
         }
 
-        //connect to mongodb
-        await connectMongoDB()
+                //connect to mongodb
+                await connectMongoDB()
+                
+        const imageResults = []
 
-        //search for duplicate
-        const duplicate = await Categories.find({category})
+        for(let {Id, image} of images){
+            const result = await cloudinary.uploader.upload(image, {
+                resource_type: "image", // Specify the resource type as an image
+                folder: "products", // Optional: Specify a folder in Cloudinary
+              });
 
-        if(duplicate.length){
-            console.log(duplicate)
-            return NextResponse.json(
-                {message: 'Category already exists'},
-                {status: 409}
-            )
+            const ImageObject = images.find((image:any) => image.Id === Id)
+
+            delete ImageObject.image
+            delete ImageObject.url
+
+            imageResults.push({
+                ...ImageObject,
+                imageId:result.public_id,
+                url:result.secure_url,
+                id:Id
+            })
         }
 
-        //createa a new category in the database
-        await Categories.create({category,image:result.public_id})
+
+
+        //create a new product in the database
+        await Product.create({name, description, brand, retailPrice, discountedPrice, stock, categories, images:imageResults})
 
         return NextResponse.json(
             {message: 'Category created successfully'},
@@ -92,13 +83,9 @@ export const POST = async (request: Request) => {
 }
 
 //Handle PATCH requests to updatea a category
-export async function PATCH(request: Request){
+export async function PATCH(req: Request){
     try{
-    //Parse the incoming formData request
-    const formData = await request.formData();
-    const category = formData.get("category");
-    const image = formData.get("image");
-    const id = formData.get("id");
+    const {id, category}: {id: string; category: string} = await req.json()
     
     //Validate input
     if(!id || !category || typeof category !== 'string' || category.trim().length === 0){
@@ -110,7 +97,7 @@ export async function PATCH(request: Request){
 
     await connectMongoDB();
 
-    const updatedCategory = await Categories.findByIdAndUpdate(id, {category,image}, {new: true})
+    const updatedCategory = await Product.findByIdAndUpdate(id, {category}, {new: true})
 
     if(!updatedCategory){
         return NextResponse.json(
@@ -128,31 +115,24 @@ export async function PATCH(request: Request){
     return NextResponse.json(
         {message: 'An error occured while updating the category'},
         {status: 500}
-    )
-}
-}
+)}}
 
 //Handle DELETE requests to delete a category
 export async function DELETE(req: Request){
     try{
-        const {id, public_id}: { id: string, public_id:string } = await req.json();
+        const {id}: { id: string } = await req.json();
 
         //validate input
-        if (!id || !public_id){
+        if (!id){
             return NextResponse.json(
                 {message: 'ID is required'},
                 {status: 400}
-            )
-        }
-
-
+            )}
 
         await connectMongoDB()
-
-        cloudinary.uploader.destroy(public_id)
         
         //Delete the category from the database
-        const deletedCategory = await Categories.findByIdAndDelete(id)
+        const deletedCategory = await Product.findByIdAndDelete(id)
 
         if(!deletedCategory){
             return NextResponse.json(
