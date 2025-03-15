@@ -76,7 +76,7 @@ export const POST = async (request: Request) => {
         }
 
         //createa a new category in the database
-        await Categories.create({category,image:result.public_id})
+        await Categories.create({category,image:result.public_id,link:result.secure_url})
 
         return NextResponse.json(
             {message: 'Category created successfully'},
@@ -99,9 +99,10 @@ export async function PATCH(request: Request){
     const category = formData.get("category");
     const image = formData.get("image");
     const id = formData.get("id");
+    const link = formData.get("link")
     
     //Validate input
-    if(!id || !category || typeof category !== 'string' || category.trim().length === 0){
+    if(!id || !category || typeof category !== 'string' || category.trim().length === 0 || !link){
         return NextResponse.json(
             {message: "ID and valid category are required"},
             {status: 400}
@@ -110,7 +111,7 @@ export async function PATCH(request: Request){
 
     await connectMongoDB();
 
-    const updatedCategory = await Categories.findByIdAndUpdate(id, {category,image}, {new: true})
+    const updatedCategory = await Categories.findByIdAndUpdate(id, {category,image,link}, {new: true})
 
     if(!updatedCategory){
         return NextResponse.json(

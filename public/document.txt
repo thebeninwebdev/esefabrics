@@ -4,3 +4,4 @@ mongodb - use google and use the osayivictoryeseosa@gmail.com
 
 tasks
 - add a image file input field to the admin categories page
+- change the LEAVES to lives on the home page slider

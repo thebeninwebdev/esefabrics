@@ -31,6 +31,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Progress } from '@/components/ui/progress'
 
 type CATEGORY = {
   _id:string;
@@ -50,6 +51,7 @@ const editFormSchema = z.object({
 
 export default function page() {
     const [isLoading, setIsLoading] = useState(false)
+    const [progress, setProgress] = useState(13)
     const [preview, setPreview] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false)
     const [currentCategory, setCurrentCategory] = useState<CATEGORY>({_id:"",image:"",category:""})
@@ -61,6 +63,18 @@ export default function page() {
     useEffect(() => {
         fetchCategories()
     },[])
+
+    useEffect(() => {
+      if(isLoading){
+        const timer = setTimeout(() => setProgress(66), 500)
+        return () => clearTimeout(timer)
+      }
+        
+    },[isLoading])
+
+    useEffect(() => {
+      if(!isLoading) setProgress(13)
+    },[isLoading])
 
     useEffect(() => {
       setFilteredCategories(categories)
@@ -78,12 +92,14 @@ export default function page() {
 
     const deleteCategory = async (id:string) => {
         try {
+          setIsLoading(true)
+          const public_id = categories.find((category:CATEGORY) => category._id === id).image
             const response = await fetch(`/api/category`,{
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({id}),
+                body: JSON.stringify({id,public_id}),
             })
 
             if(!response.ok){
@@ -92,10 +108,15 @@ export default function page() {
             }
 
             fetchCategories()
+
             toast.success("Category deleted successfully")
+
         } catch (error) {
             toast.error('Check internet connection')
             console.log(error)
+
+        }finally{
+          setIsLoading(false)
         }
     }
 
@@ -108,7 +129,7 @@ export default function page() {
     })
 
     const editForm = useForm<z.infer<typeof editFormSchema>>({
-      resolver: zodResolver(formSchema),
+      resolver: zodResolver(editFormSchema),
       defaultValues: {
         category: "",
       },
@@ -154,10 +175,12 @@ export default function page() {
     }
 
     async function editCategory (data: z.infer<typeof editFormSchema>) {
+      setIsOpen(false)
     try {
         setIsLoading(true)
-        setIsOpen(false)
 
+
+        console.log("working")
         const formData = new FormData();
 
         formData.append("category", data.category);
@@ -190,10 +213,13 @@ export default function page() {
     }
     }
 
-    //ufos by leslie kean (harmony/crown)
-
   return (
-    <div className='py-20 space-y-10'>
+    <>
+    {isLoading? 
+    <div className="w-full h-[calc(100vh_-_4.2rem)] flex justify-center items-center">
+      <Progress value={progress} className="w-[60%]"/>
+    </div>
+    :<div className='py-20 space-y-10'>
     <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-md mx-auto pr-5 space-y-6">
       <FormField
@@ -255,18 +281,21 @@ export default function page() {
       </div>
       <Input type="text"  placeholder="Search..." className='w-full sm:w-52' value={searchQuery} onChange={(e) => handleChange(e)}/>
     </div>
-    <div className='w-full h-96 gap-3 overflow-auto'>
-    {filteredCategories?.map((item:{category:string,_id: string},idx:number) => {
+    <div className='w-full h-96 space-y-4 overflow-auto'>
+    {(filteredCategories?.length)?filteredCategories?.map((item:{category:string,_id: string},idx:number) => {
+
         return(
-        <div className='cursor-pointer flex justify-between w-full mx-auto rounded-md capitalize shadow-lg py-2 px-5 items-center bg-neutral-300 dark:bg-neutral-600 hover:rounded-full transition-all duration-300' key={idx}><span className="hover:underline transition-all duration-300">{item?.category}</span> 
-        
+        <div className='cursor-pointer flex justify-between w-full mx-auto rounded-md uppercase shadow-lg py-2 px-5 items-center bg-neutral-300 dark:bg-neutral-600 hover:rounded-full transition-all duration-300' key={idx}><span className="hover:underline transition-all duration-300">{item?.category}</span> 
+
         <div className='flex gap-2'>
         <TooltipProvider>
         <Tooltip>
+        
         <TooltipTrigger asChild>
         <button onClick={() => {deleteCategory(item._id)}}><IoMdClose className="w-5 h-5"/>
         </button>
         </TooltipTrigger>
+        
         <TooltipContent>
           <p>Delete Category</p>
         </TooltipContent>
@@ -290,7 +319,8 @@ export default function page() {
         </TooltipProvider>
         
             </div></div>)
-})}
+}):<div  className='w-full mx-auto rounded-md shadow-lg py-2 px-5 bg-neutral-300 dark:bg-neutral-600 hover:rounded-full'>Nothing to display
+  </div>}
     </div>
 
   </div>
@@ -323,7 +353,9 @@ export default function page() {
   </Form>
       </DialogContent>
     </Dialog>
-    </div>
+    </div>}
+    </>
+    
 
   )
 }

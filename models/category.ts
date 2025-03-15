@@ -3,7 +3,8 @@ import {Schema, model, models, Document} from 'mongoose'
 
 interface ICategories extends Document {
     category: string;
-    image: string
+    image: string;
+    link: string;
   }
 
 const CategoriesSchema = new Schema<ICategories>({
@@ -12,6 +13,10 @@ const CategoriesSchema = new Schema<ICategories>({
         required: true
     },
     image: {
+        type: String,
+        required: true
+    },
+    link: {
         type: String,
         required: true
     }

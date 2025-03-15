@@ -13,7 +13,7 @@ import Link from "next/link"
 const banners = [
     { src: "/slide-1.jpg", alt: 'Fashion 1', text: 'Style With Comfort', sideKickText: "You can have anything you want in life if you dress for it." },
     { src: "/slide-2.jpg", alt: 'Fashion 2', text: 'Fashion Forward', sideKickText: "Style is a way to say who you are without having to speak." },
-    { src: "/slide-3.jpg", alt: 'Fashion 3', text: 'Express Yourself', sideKickText: "Clothes mean nothing until someone leaves in them." },
+    { src: "/slide-3.jpg", alt: 'Fashion 3', text: 'Express Yourself', sideKickText: "Clothes mean nothing until someone lives in them." },
   ];
 
 export function HomeSlider() {
