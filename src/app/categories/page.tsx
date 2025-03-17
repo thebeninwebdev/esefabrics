@@ -58,17 +58,18 @@ export default function Home() {
       <p className="text-md sm:text-lg font-semibold mb-8 text-center py-16">Shop through our latest selection of Fashion </p>
       
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories && categories?.map((item:any) => (
-          <Link href={`/category/${item?.category.toLowerCase()}`} key={item?.id}>
+        {categories && categories?.map((item:any,idx:number) => (
+          <Link href={`/category/${item?.category.toLowerCase()}`} key={idx}>
             <Card className="overflow-hidden h-full transition-all hover:shadow-lg">
               <CardContent className="p-0 relative">
                 <div className="aspect-square relative">
                   <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                    <Image src="/category-3.jpg" alt={item?.category} fill className="w-full h-auto relative"/>
+                    <img src={item?.link} alt={item?.category} className="w-full h-full object-contain block hover:scale-110 transition-transform duration-1000 ease-in-out"/>
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-white px-6 py-2 rounded-sm text-sm font-medium shadow-md">
+                  <span className="bg-white px-6 py-2 rounded-sm text-sm font-medium sh
+                  adow-md">
                     {item?.category}
                   </span>
                 </div>

@@ -85,21 +85,21 @@ export async function GET(req: Request){
 //Handle PATCH requests to updatea a category
 export async function PATCH(req: Request){
     try{
-    const {id, category}: {id: string; category: string} = await req.json()
+        const {id, name, description, brand, retailPrice, discountedPrice, stock, categories, images} = await req.json()
     
-    //Validate input
-    if(!id || !category || typeof category !== 'string' || category.trim().length === 0){
-        return NextResponse.json(
-            {message: "ID and valid category are required"},
-            {status: 400}
-        )
-    }
+        //Validate input
+        if(!name || !description || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images || !id){
+            return NextResponse.json(
+                {message: "All fields are required"},
+                {status: 400}
+            )
+        }
 
     await connectMongoDB();
 
-    const updatedCategory = await Product.findByIdAndUpdate(id, {category}, {new: true})
+    const updatedProduct = await Product.findByIdAndUpdate(id, {name, description, brand, retailPrice, discountedPrice, stock, categories, images}, {new: true})
 
-    if(!updatedCategory){
+    if(!updatedProduct){
         return NextResponse.json(
             {message: 'Category not found'},
             {status: 404}
@@ -107,7 +107,7 @@ export async function PATCH(req: Request){
     }
 
     return NextResponse.json(
-        {message: 'Category updated successfully', category: updatedCategory},
+        {message: 'Category updated successfully', category: updatedProduct},
         {status: 200}
     )
 }catch(error){

@@ -1,0 +1,51 @@
+/* Light mode (default) */
+.ql-toolbar,
+.ql-container {
+  background-color: #f5f5f5 !important; /* Secondary background */
+  color: #333333 !important; /* Primary text */
+  border: 1px solid #ccc;
+}
+
+.ql-editor {
+  background-color: #ffffff !important; /* White editor background */
+  color: #333333 !important; /* Text color */
+}
+
+.ql-picker {
+  color: #333333 !important;
+}
+
+/* Light mode toolbar icons */
+.ql-stroke {
+  stroke: #2e8b57 !important; /* Complement color */
+}
+
+.ql-fill {
+  fill: #50c878 !important; /* Primary */
+}
+
+/* --- DARK MODE --- */
+.dark .ql-toolbar,
+.dark .ql-container {
+  background-color: #141414 !important; /* Dark background */
+  color: #ffffff !important; /* Text-dark */
+  border: 1px solid #333333;
+}
+
+.dark .ql-editor {
+  background-color: #333333 !important; /* Dark secondary */
+  color: #d3d3d3 !important; /* Light text */
+}
+
+.dark .ql-picker {
+  color: #d3d3d3 !important;
+}
+
+/* Dark mode toolbar icons */
+.dark .ql-stroke {
+  stroke: #39ff14 !important; /* Complement-dark */
+}
+
+.dark .ql-fill {
+  fill: #50c878 !important; /* Primary-dark */
+}

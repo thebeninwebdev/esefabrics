@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/carousel"
 import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
+import Link from "next/link"
 
 
 const CategoryCard = ({ title, image }:{
@@ -39,9 +40,11 @@ const DiscoveryCard = () => {
     <div className="w-full overflow-hidden border border-neutral-900 rounded-lg dark:border-neutral-200 lg:max-w-72">
       <div className="p-4 flex justify-between items-center w-full lg:flex-col gap-10">
         <h2 className="text-xl lg:text-3xl">Discovery all new items</h2>
+        <Link href="/categories">
         <div className="p-2 rounded-full border border-neutral-900 flex items-center justify-center -rotate-45 hover:bg-neutral-900 hover:text-text-dark cursor-pointer ease-in-out duration-500 transition-colors dark:border-neutral-200 dark:hover:bg-background hover:dark:text-text">
           <ArrowRight className="h-4 w-4" />
         </div>
+        </Link>
       </div>
     </div>
   );

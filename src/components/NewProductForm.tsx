@@ -9,6 +9,9 @@ import Image from "next/image"
 import { CiTrash } from "react-icons/ci"
 import { useAppContext } from "@/context"
 import { ColorPicker } from "./ColorPicker"
+import ReactQuill from "react-quill-new"
+import "react-quill-new/dist/quill.snow.css"
+import "@/styles/quill-custom.css";
 
 interface Image {       
   id: string;
@@ -56,6 +59,13 @@ export function NewProductForm() {
   
     if (images.length === 0) {
       toast.error("Please upload at least one image");
+      return;
+    }
+
+    const plainText = description.replace(/<[^>]+>/g, "").trim();
+
+    if (!plainText) {
+      toast.error("Description is required.");
       return;
     }
   
@@ -168,7 +178,9 @@ export function NewProductForm() {
         <label className="font-medium">
           <span>Item description</span>
         </label>
-        <input type="text" placeholder="blue polo shirt imported from germany" className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent" value={description} onChange={(e) => setDescription(e.target.value)} required />
+        <div className="dark:bg-[#141414] bg-[#f5f5f5] p-2 rounded-lg">
+        <ReactQuill value={description} onChange={setDescription} theme="snow" />
+      </div>
       </div>
       {/* BRAND FIELD */}
       <div className="text-xs flex flex-col gap-2">

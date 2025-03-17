@@ -4,6 +4,7 @@ import {MobMenu} from "./MobileMenu";
 import Image from "next/image";
 import ThemeSwitch from "./Themeswitch";
 import { CiShoppingCart } from "react-icons/ci";
+import Link from "next/link";
 
 
 export default function Header() {
@@ -12,7 +13,9 @@ export default function Header() {
       <header className="h-16 text-[15px] fixed inset-0 flex-center bg-background dark:bg-background-dark bg- z-[9999] shadow-lg">
         <nav className=" px-3.5 flex-center-between w-full max-w-7xl mx-auto">
           <div className="flex-center gap-x-3 z-[999] relative">
+            <Link href="/">
             <Image src={"/logo.png"} alt="logo" width={342} height={63} className="object-contain w-28"/>
+            </Link>
           </div>
 
           <ul className="gap-x-1 lg:flex-center hidden">
