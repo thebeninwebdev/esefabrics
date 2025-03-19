@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { HomeSlider } from "@/components/HomeSlider";
 import Marquee from "react-fast-marquee"
 import { TbChristmasTree } from "react-icons/tb";
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -12,9 +13,24 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { Eye } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
 import Link from "next/link"
+import { Badge } from "@/components/ui/badge";
+import { IProduct } from '@/app/types';
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 
 const CategoryCard = ({ title, image }:{
@@ -51,14 +67,18 @@ const DiscoveryCard = () => {
 };
 
 export default function Home() {
-  const {categories, fetchCategories} = useAppContext()
+  const {categories, fetchCategories, products, fetchProducts} = useAppContext()
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
   useEffect(() => {
     fetchCategories()
+    fetchProducts()
   },[])
 
   useEffect(() => {
     fetchCategories()
   },[])
+
   return (
     <main className=" w-full">
       <div className="p-3 sm:p-5">
@@ -98,9 +118,68 @@ export default function Home() {
 
       </Carousel>
 
-      
     </div>
   </div>
+  <div className=" mx-auto px-2 py-16 space-y-20">
+      <h1 className="text-4xl font-bold text-center mb-6">Today's Top Picks</h1>
+      
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2">
+        {products?.map((product:IProduct,idx:number) => (
+          <Card key={idx} className="overflow-hidden border-0 rounded-md flex flex-col h-full">
+  <div className="relative">
+    <img 
+      src={product.images[0].url}
+      alt={product.images[0].id} 
+      className="w-full h-auto object-cover block hover:scale-110 transition-transform duration-1000 ease-in-out" 
+    />
+    <button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => setIsDrawerOpen(true)}><Eye className="w-4 h-4"/></button>
+  </div>
+  <CardContent className="p-4 flex-grow flex flex-col justify-center space-y-2">
+  <h3 className="text-sm font-normal line-clamp-2">
+  {product.name}
+</h3>
+    <div className="flex items-center gap-5">
+    <span className="font-semibold">
+        {Number(product.discountedPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      <span className="text-gray-400 line-through text-sm">
+        {Number(product.retailPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      
+    </div>
+  </CardContent>
+  <CardFooter className="pt-0 px-4 mt-auto">
+    <Button className="w-full text-text-dark dark:text-text">Add to cart</Button>
+  </CardFooter>
+</Card>
+
+        ))}
+      </div>
+    </div>
+    <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+      <SheetContent className="pt-[70px]">
+        <SheetHeader>
+          <SheetTitle>Edit profile</SheetTitle>
+          <SheetDescription>
+            Make changes to your profile here. Click save when you're done.
+          </SheetDescription>
+        </SheetHeader>
+        <p>Hello world</p>
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button type="submit">Save changes</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
     </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect, FormEvent } from "react"
+import dynamic from "next/dynamic"
 import {motion} from "framer-motion"
 import {IoIosClose} from "react-icons/io"
 import { toast } from "sonner"
@@ -9,9 +10,14 @@ import Image from "next/image"
 import { CiTrash } from "react-icons/ci"
 import { useAppContext } from "@/context"
 import { ColorPicker } from "./ColorPicker"
-import ReactQuill from "react-quill-new"
 import "react-quill-new/dist/quill.snow.css"
 import "@/styles/quill-custom.css";
+import { useLoading } from '@/context/LoadingContext'
+
+// Dynamically import ReactQuill to prevent SSR issues
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false, // This ensures it only loads in the browser
+});
 
 interface Image {       
   id: string;
@@ -36,7 +42,7 @@ export function NewProductForm() {
     Id:string; image: any; variantType?: string; variant?: string; url:string }[]>([]);
   const [ category, setCategory] = useState<string>("")
   const [categoriesArray, setCategoriesArray] = useState<{category:string,_id: string}[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const {isLoading, setLoading} = useLoading();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -62,6 +68,8 @@ export function NewProductForm() {
       return;
     }
 
+    const categoryNames: string[] = categoriesArray.map(item => item.category);
+
     const plainText = description.replace(/<[^>]+>/g, "").trim();
 
     if (!plainText) {
@@ -70,12 +78,12 @@ export function NewProductForm() {
     }
   
     try {
-      setIsLoading(true);
+      setLoading(true);
   
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ name, description, brand, retailPrice, discountedPrice, stock, images, categories:categoriesArray}),
+        body: JSON.stringify({ name, description, brand, retailPrice, discountedPrice, stock, images, categories:categoryNames}),
       });
   
       const data = await response.json();
@@ -86,11 +94,24 @@ export function NewProductForm() {
       }
   
       toast.success("Product added successfully");
+      setName("")
+      setBrand("")
+      setDescription("")
+      setCategory("")
+      setCategoriesArray([])
+      setColor("")
+      setDiscountedPrice("")
+      setRetailPrice("")
+      setImages([])
+      setSelectedVariant("")
+      setStock("")
+      setSubVariantSelected("")
+      setVariantArray([])
     } catch (error) {
       console.error(error);
       toast.error("Please check your internet connection");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
   
@@ -239,7 +260,10 @@ export function NewProductForm() {
             {
               <select className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent dark:bg-[#1a1a1a] w-full mt-5" value={subVariantSelected} onChange={(e)=> {
 
+
                 if(variantArray.find((item:any) => item.subVariant.toLowerCase() === e.target.value.toLowerCase())) return
+
+                if(e.target.value === "") return
 
                   setVariantArray((prevState:any) => (
                     [...prevState,{variantType:selectedVariant,

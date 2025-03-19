@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { AppWrapper } from "@/context";
+
 import "./globals.css";
 import {Toaster} from 'sonner'
-import BottomNav from "@/components/BottomNav";
+
 import Wrapper from "@/components/Wrapper";
+import { AppWrapper } from "@/context";
+
 import { AuthProvider } from "@/providers/AuthProvider";
 import { ThemeProvider } from "next-themes";
-import Header from "@/components/Header";
+import { LoadingProvider, useLoading } from "@/context/LoadingContext";
 
+import Header from "@/components/Header";
+import BottomNav from "@/components/BottomNav";
+import GlobalLoader from "@/components/GlobalLoader"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +42,8 @@ export default function RootLayout({
         defaultTheme="system"
         enableSystem
         disableTransitionOnChange>
+          <LoadingProvider>
+            <GlobalLoader/>
           <Wrapper path="/admin">
           <Header/>
           </Wrapper>
@@ -47,6 +54,8 @@ export default function RootLayout({
         <BottomNav/>
         </Wrapper>
           <Toaster position="bottom-right"/>
+          </LoadingProvider>
+
         </ThemeProvider>
         </AppWrapper>
         </AuthProvider>

@@ -31,12 +31,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Progress } from '@/components/ui/progress'
+import { useLoading } from '@/context/LoadingContext'
+
 
 type CATEGORY = {
   _id:string;
   category: string;
   image: string;
+  link: string;
 }
 
 // Validation Schema
@@ -50,11 +52,11 @@ const editFormSchema = z.object({
 });
 
 export default function page() {
-    const [isLoading, setIsLoading] = useState(false)
-    const [progress, setProgress] = useState(13)
+
+    const {isLoading, setLoading} = useLoading();
     const [preview, setPreview] = useState<string | null>(null);
     const [isOpen, setIsOpen] = useState(false)
-    const [currentCategory, setCurrentCategory] = useState<CATEGORY>({_id:"",image:"",category:""})
+    const [currentCategory, setCurrentCategory] = useState<CATEGORY>({_id:"",image:"",category:"", link:""})
     const {categories, fetchCategories} = useAppContext()
 
     const [searchQuery, setSearchQuery] = React.useState("");
@@ -63,18 +65,6 @@ export default function page() {
     useEffect(() => {
         fetchCategories()
     },[])
-
-    useEffect(() => {
-      if(isLoading){
-        const timer = setTimeout(() => setProgress(66), 500)
-        return () => clearTimeout(timer)
-      }
-        
-    },[isLoading])
-
-    useEffect(() => {
-      if(!isLoading) setProgress(13)
-    },[isLoading])
 
     useEffect(() => {
       setFilteredCategories(categories)
@@ -92,7 +82,7 @@ export default function page() {
 
     const deleteCategory = async (id:string) => {
         try {
-          setIsLoading(true)
+          setLoading(true)
           const public_id = categories.find((category:CATEGORY) => category._id === id).image
             const response = await fetch(`/api/category`,{
                 method: 'DELETE',
@@ -116,7 +106,7 @@ export default function page() {
             console.log(error)
 
         }finally{
-          setIsLoading(false)
+          setLoading(false)
         }
     }
 
@@ -137,7 +127,7 @@ export default function page() {
 
     async function onSubmit (data: z.infer<typeof formSchema>) {
     try {
-        setIsLoading(true)
+        setLoading(true)
 
         const formData = new FormData();
 
@@ -169,7 +159,7 @@ export default function page() {
         toast.error("Please check internet connection")
         console.log(error)
     }finally{
-        setIsLoading(false)
+        setLoading(false)
         fetchCategories()
     }
     }
@@ -177,14 +167,13 @@ export default function page() {
     async function editCategory (data: z.infer<typeof editFormSchema>) {
       setIsOpen(false)
     try {
-        setIsLoading(true)
-
-
-        console.log("working")
+        setLoading(true)
+        
         const formData = new FormData();
 
         formData.append("category", data.category);
         formData.append("image", currentCategory.image)
+        formData.append("link", currentCategory.link)
         formData.append('id', currentCategory._id)
 
         const response = await fetch('/api/category', {
@@ -208,18 +197,13 @@ export default function page() {
         toast.error("Please check internet connection")
         console.log(error)
     }finally{
-        setIsLoading(false)
+        setLoading(false)
         fetchCategories()
     }
     }
 
   return (
-    <>
-    {isLoading? 
-    <div className="w-full h-[calc(100vh_-_4.2rem)] flex justify-center items-center">
-      <Progress value={progress} className="w-[60%]"/>
-    </div>
-    :<div className='py-20 space-y-10'>
+    <div className='py-20 space-y-10'>
     <Form {...form}>
     <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-md mx-auto pr-5 space-y-6">
       <FormField
@@ -285,7 +269,7 @@ export default function page() {
     {(filteredCategories?.length)?filteredCategories?.map((item:{category:string,_id: string},idx:number) => {
 
         return(
-        <div className='cursor-pointer flex justify-between w-full mx-auto rounded-md uppercase shadow-lg py-2 px-5 items-center bg-neutral-300 dark:bg-neutral-600 hover:rounded-full transition-all duration-300' key={idx}><span className="hover:underline transition-all duration-300">{item?.category}</span> 
+        <div className='cursor-pointer flex justify-between w-full mx-auto rounded-md uppercase shadow-lg py-2 px-5 items-center bg-neutral-300 dark:bg-neutral-600 ' key={idx}><span className="hover:underline transition-transform duration-1000">{item?.category}</span> 
 
         <div className='flex gap-2'>
         <TooltipProvider>
@@ -297,7 +281,7 @@ export default function page() {
         </TooltipTrigger>
         
         <TooltipContent>
-          <p>Delete Category</p>
+          <p className="text-sm">Delete Category</p>
         </TooltipContent>
       </Tooltip>
         </TooltipProvider>
@@ -313,7 +297,7 @@ export default function page() {
         </button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Edit Category</p>
+          <p className="text-sm">Edit Category</p>
         </TooltipContent>
       </Tooltip>
         </TooltipProvider>
@@ -353,9 +337,6 @@ export default function page() {
   </Form>
       </DialogContent>
     </Dialog>
-    </div>}
-    </>
-    
-
+    </div>
   )
 }

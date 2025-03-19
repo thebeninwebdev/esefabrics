@@ -30,8 +30,6 @@ export async function GET(req: Request){
         //Parse the incoming JSON request
         const {name, description, brand, retailPrice, discountedPrice, stock, categories, images} = await req.json()
 
-        console.log(name, description, brand, retailPrice, discountedPrice, stock, categories, images)
-
         //Validate the input
         if(!name || !description || !brand || !retailPrice || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images){
             return NextResponse.json(
