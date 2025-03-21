@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { HomeSlider } from "@/components/HomeSlider";
 import Marquee from "react-fast-marquee"
 import { TbChristmasTree } from "react-icons/tb";
@@ -17,10 +17,9 @@ import { Eye } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
 import Link from "next/link"
-import { Badge } from "@/components/ui/badge";
-import { IProduct } from '@/app/types';
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { IProduct, IImage } from '@/app/types';
+import DOMPurify from 'dompurify'
+
 import {
   Sheet,
   SheetClose,
@@ -31,6 +30,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+
+
 
 
 const CategoryCard = ({ title, image }:{
@@ -66,9 +67,14 @@ const DiscoveryCard = () => {
   );
 };
 
+
+
 export default function Home() {
   const {categories, fetchCategories, products, fetchProducts} = useAppContext()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [drawerId, setDrawerId] = useState("")
+  const [currentProduct, setCurrentProduct] = useState<IProduct>({} as IProduct);
+  
 
   useEffect(() => {
     fetchCategories()
@@ -78,6 +84,23 @@ export default function Home() {
   useEffect(() => {
     fetchCategories()
   },[])
+
+  useEffect(() => {
+    if(drawerId) setCurrentProduct(products.find((product:IProduct) => product._id === drawerId))
+  },[drawerId])
+
+  const cleanDescription = useMemo(() => {
+    // Hook runs before sanitizing
+    DOMPurify.addHook('uponSanitizeElement', (node) => {
+      if (node instanceof HTMLElement && node.style) {
+        node.style.backgroundColor = ''; // strip white bg
+      }
+    });
+  
+    return DOMPurify.sanitize(currentProduct?.description || '', {
+      USE_PROFILES: { html: true },
+    });
+  }, [currentProduct?.description]);
 
   return (
     <main className=" w-full">
@@ -132,7 +155,10 @@ export default function Home() {
       alt={product.images[0].id} 
       className="w-full h-auto object-cover block hover:scale-110 transition-transform duration-1000 ease-in-out" 
     />
-    <button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => setIsDrawerOpen(true)}><Eye className="w-4 h-4"/></button>
+    <button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => {
+      setDrawerId(product._id as string)
+      setIsDrawerOpen(true)
+      }}><Eye className="w-4 h-4" /></button>
   </div>
   <CardContent className="p-4 flex-grow flex flex-col justify-center space-y-2">
   <h3 className="text-sm font-normal line-clamp-2">
@@ -165,19 +191,50 @@ export default function Home() {
       </div>
     </div>
     <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-      <SheetContent className="pt-[70px]">
-        <SheetHeader>
-          <SheetTitle>Edit profile</SheetTitle>
-          <SheetDescription>
-            Make changes to your profile here. Click save when you're done.
-          </SheetDescription>
-        </SheetHeader>
-        <p>Hello world</p>
-        <SheetFooter>
-          <SheetClose asChild>
-            <Button type="submit">Save changes</Button>
-          </SheetClose>
-        </SheetFooter>
+    <SheetTitle>Quick view</SheetTitle>
+      <SheetContent className="space-y-5 p-0 bg-background dark:bg-background-dark overflow-y-auto">
+        <div className="overflow-auto pt-8 w-full">
+        <div className="flex w-max gap-3">
+        {drawerId && currentProduct?.images?.map((image:IImage,index:number) => (
+          <div key={index} className="w-36 h-44 block bg-red-500 mt-8">
+          <img
+            src={image.url}
+            alt={image.id}
+            className="bg-gray-100 object-cover relative w-full h-full"
+          />
+        </div>
+        ))}
+        </div>
+        </div>
+        <div className="px-3 space-y-4">
+        <p className="max-w-sm">{currentProduct?.name}</p>
+        <div className="flex items-center gap-5">
+    <span className="font-semibold">
+        {Number(currentProduct.discountedPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      <span className="text-gray-400 line-through text-sm">
+        {Number(currentProduct.retailPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      <span className="text-xs bg-primary dark:bg-primary-dark text-text-dark dark:text-text px-1 rounded-lg">-{Math.round(((currentProduct?.retailPrice - currentProduct?.discountedPrice) / currentProduct?.retailPrice) * 100)}%
+      </span>
+
+    </div>
+    {currentProduct?.description && (
+  <div
+    className="text-text dark:text-text-dark w-full"
+    style={{ backgroundColor: 'transparent', color: 'inherit' }}
+    dangerouslySetInnerHTML={{ __html: cleanDescription }}
+  />
+)}
+        </div>
       </SheetContent>
     </Sheet>
     </main>

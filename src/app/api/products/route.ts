@@ -71,6 +71,7 @@ export async function GET(req: Request){
             {message: 'Category created successfully'},
             {status: 201}
         )
+        
     } catch (error) {
         console.error('Error updating category: ', error)
         return NextResponse.json(

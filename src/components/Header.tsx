@@ -10,7 +10,7 @@ import Link from "next/link";
 export default function Header() {
   return (
     <div>
-      <header className="h-16 text-[15px] fixed inset-0 flex-center bg-background dark:bg-background-dark bg- z-[9999] shadow-lg">
+      <header className="h-16 text-[15px] fixed inset-0 flex-center bg-background dark:bg-background-dark bg- z-10 shadow-lg">
         <nav className=" px-3.5 flex-center-between w-full max-w-7xl mx-auto">
           <div className="flex-center gap-x-3 z-[999] relative">
             <Link href="/">
