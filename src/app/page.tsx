@@ -5,6 +5,7 @@ import { HomeSlider } from "@/components/HomeSlider";
 import Marquee from "react-fast-marquee"
 import { TbChristmasTree } from "react-icons/tb";
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import SizeChart from '@/components/SizeChart';
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -17,7 +18,7 @@ import { Eye } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
 import Link from "next/link"
-import { IProduct, IImage, IVariantArray, GroupedVariant } from '@/app/types';
+import { IProduct, IImage, GroupedVariant } from '@/app/types';
 
 import {
   Sheet,
@@ -25,8 +26,7 @@ import {
   SheetTitle
 } from "@/components/ui/sheet"
 import { groupVariants } from "@/lib/utils";
-
-
+import { Variant } from "@/components/Variant";
 
 const CategoryCard = ({ title, image }:{
   title:string, image:string}) => {
@@ -61,10 +61,8 @@ const DiscoveryCard = () => {
   );
 };
 
-
-
 export default function Home() {
-  const {categories, fetchCategories, products, fetchProducts} = useAppContext()
+  const {categories, fetchCategories, products, fetchProducts, selectedVariant} = useAppContext()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [drawerId, setDrawerId] = useState("")
   const [cleanHtml, setCleanHtml] = useState('');
@@ -144,9 +142,7 @@ export default function Home() {
         </CarouselContent>
 <DiscoveryCard />
         </div>
-
       </Carousel>
-
     </div>
   </div>
   <div className=" mx-auto px-2 py-16 space-y-20">
@@ -244,16 +240,21 @@ export default function Home() {
   />
 )}
         </div>
-<div className="py-5">
- {groupedArray?.map((group:any,idx:number) => (
+<div className="py-5 px-3 space-y-5">
+ {groupedArray?.map((group,idx:number) => (
   <div className="" key={idx}>
-<p>{group?.variantType}</p>
+    <div className="flex justify-between">
+      <div className="flex w-max gap-4">
+    <p>{group?.variantType[0].toUpperCase()+group?.variantType.slice(1)}:</p>
+    {group?.variantType === "size" &&<p className="">{selectedVariant.toUpperCase()}</p>}
+    </div>
+    {group?.variantType === "size" && <SizeChart />}
+    </div>
+    
+    <Variant subVariants={group?.variants} variantType={group?.variantType}/>
   </div>
-  
  ))}
-
 </div>
-
       </SheetContent>
     </Sheet>
     </main>

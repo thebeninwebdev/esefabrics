@@ -14,6 +14,7 @@ export function AppWrapper({children}: {
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [variants, setVariants] = useState([])
     const [products, setProducts] = useState([])
+    const [selectedVariant, setSelectedVariant] = useState("")
 
     const fetchProducts = async () => {
         try {
@@ -61,7 +62,7 @@ export function AppWrapper({children}: {
         }
     }
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant}}>
             {children}
         </AppContext.Provider>
     )
