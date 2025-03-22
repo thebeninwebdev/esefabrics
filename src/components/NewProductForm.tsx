@@ -83,7 +83,7 @@ export function NewProductForm() {
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ name, description, brand, retailPrice, discountedPrice, stock, images, categories:categoryNames}),
+        body: JSON.stringify({ name, description, brand, retailPrice, discountedPrice, stock, images, categories:categoryNames, variantArray}),
       });
   
       const data = await response.json();
@@ -247,9 +247,9 @@ export function NewProductForm() {
         onChange={(e)=> setSelectedVariant(e.target.value)}
         >
           <option value="">{!variants?"loading...":"Select a variant"}</option>
-          {variants?.map(({variantType,_id}:{variantType:string,_id:string},idx:number) => {
+          {variants?.map(({variantType}:{variantType:string},idx:number) => {
             return(
-              <option value={_id} key={idx} className="">
+              <option value={variantType.toUpperCase()} key={idx} className="">
                 {variantType.toUpperCase()}
               </option>
             )})}
@@ -259,7 +259,6 @@ export function NewProductForm() {
           <div>
             {
               <select className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent dark:bg-[#1a1a1a] w-full mt-5" value={subVariantSelected} onChange={(e)=> {
-
 
                 if(variantArray.find((item:any) => item.subVariant.toLowerCase() === e.target.value.toLowerCase())) return
 

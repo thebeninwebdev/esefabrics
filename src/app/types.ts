@@ -13,6 +13,16 @@ interface SubMenuItem {
     url: string;
     color?: string;
   }
+
+  export type GroupedVariant = {
+      variantType: string;
+      variants: string[];
+    };
+
+  export interface IVariantArray {
+    variantType: string;
+    subVariant: string;
+  }
   
   // type for the main menu item
  export interface MainMenuItem {
@@ -35,11 +45,7 @@ interface SubMenuItem {
     rating: number;
     numReviews: number;
     images: IImage[];
-    variants: {
-      size: string;
-      color: string;
-      stock: number;
-    }[];
+    variantArray: IVariantArray[]
     createdAt: Date;
     updatedAt: Date;
   }

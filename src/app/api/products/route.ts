@@ -28,10 +28,10 @@ export async function GET(req: Request){
 
     try {
         //Parse the incoming JSON request
-        const {name, description, brand, retailPrice, discountedPrice, stock, categories, images} = await req.json()
+        const {name, description, brand, retailPrice, discountedPrice, stock, categories, images, variantArray} = await req.json()
 
         //Validate the input
-        if(!name || !description || !brand || !retailPrice || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images){
+        if(!name || !description || !brand || !retailPrice || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images || !variantArray){
             return NextResponse.json(
                 {message: 'All fields are required'},
                 {status: 400}
@@ -62,10 +62,8 @@ export async function GET(req: Request){
             })
         }
 
-
-
         //create a new product in the database
-        await Product.create({name, description, brand, retailPrice, discountedPrice, stock, categories, images:imageResults})
+        await Product.create({name, description, brand, retailPrice, discountedPrice, stock, categories, images:imageResults, variantArray})
 
         return NextResponse.json(
             {message: 'Category created successfully'},
@@ -84,10 +82,10 @@ export async function GET(req: Request){
 //Handle PATCH requests to updatea a category
 export async function PATCH(req: Request){
     try{
-        const {id, name, description, brand, retailPrice, discountedPrice, stock, categories, images} = await req.json()
+        const {id, name, description, brand, retailPrice, discountedPrice, stock, categories, images, variantArray} = await req.json()
     
         //Validate input
-        if(!name || !description || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images || !id){
+        if(!name || !description || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images || !id ||!variantArray){
             return NextResponse.json(
                 {message: "All fields are required"},
                 {status: 400}
@@ -96,7 +94,7 @@ export async function PATCH(req: Request){
 
     await connectMongoDB();
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, {name, description, brand, retailPrice, discountedPrice, stock, categories, images}, {new: true})
+    const updatedProduct = await Product.findByIdAndUpdate(id, {name, description, brand, retailPrice, discountedPrice, stock, categories, images, variantArray}, {new: true})
 
     if(!updatedProduct){
         return NextResponse.json(

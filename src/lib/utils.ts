@@ -1,6 +1,33 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { GroupedVariant } from "@/app/types";
 import { CiBag1, CiBoxes, CiClock1, CiCoinInsert, CiDeliveryTruck, CiFileOn, CiMap, CiMemoPad, CiShoppingCart, CiTrash, CiUnlock, CiViewList } from "react-icons/ci";
+
+type VariantItem = {
+    variantType: string;
+    subVariant: string;
+  };
+  
+
+
+  export const groupVariants = (variantArray: VariantItem[]): GroupedVariant[] => {
+    return variantArray.reduce((acc: GroupedVariant[], curr) => {
+      const found = acc.find(item => item.variantType === curr.variantType);
+      
+      if (found) {
+        if (!found.variants.includes(curr.subVariant)) {
+          found.variants.push(curr.subVariant);
+        }
+      } else {
+        acc.push({
+          variantType: curr.variantType,
+          variants: [curr.subVariant]
+        });
+      }
+  
+      return acc;
+    }, []);
+  };
 
 export const Menus = [
   {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { HomeSlider } from "@/components/HomeSlider";
 import Marquee from "react-fast-marquee"
 import { TbChristmasTree } from "react-icons/tb";
@@ -17,20 +17,14 @@ import { Eye } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
 import Link from "next/link"
-import { IProduct, IImage } from '@/app/types';
-import DOMPurify from 'dompurify'
+import { IProduct, IImage, IVariantArray, GroupedVariant } from '@/app/types';
 
 import {
   Sheet,
-  SheetClose,
   SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+  SheetTitle
 } from "@/components/ui/sheet"
-
+import { groupVariants } from "@/lib/utils";
 
 
 
@@ -73,6 +67,8 @@ export default function Home() {
   const {categories, fetchCategories, products, fetchProducts} = useAppContext()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [drawerId, setDrawerId] = useState("")
+  const [cleanHtml, setCleanHtml] = useState('');
+  const [groupedArray, setGroupedArray] = useState<GroupedVariant[]>([] as GroupedVariant[])
   const [currentProduct, setCurrentProduct] = useState<IProduct>({} as IProduct);
   
 
@@ -82,24 +78,34 @@ export default function Home() {
   },[])
 
   useEffect(() => {
-    fetchCategories()
-  },[])
+    if(currentProduct?.description){
+      setGroupedArray(groupVariants(currentProduct?.variantArray) )
+    }
+  },[currentProduct])
 
   useEffect(() => {
+
     if(drawerId) setCurrentProduct(products.find((product:IProduct) => product._id === drawerId))
   },[drawerId])
 
-  const cleanDescription = useMemo(() => {
-    // Hook runs before sanitizing
-    DOMPurify.addHook('uponSanitizeElement', (node) => {
-      if (node instanceof HTMLElement && node.style) {
-        node.style.backgroundColor = ''; // strip white bg
-      }
-    });
-  
-    return DOMPurify.sanitize(currentProduct?.description || '', {
-      USE_PROFILES: { html: true },
-    });
+  useEffect(() => {
+    (async () => {
+      const DOMPurify = (await import('dompurify')).default;
+
+      // Strip background color
+      DOMPurify.removeAllHooks();
+      DOMPurify.addHook('uponSanitizeElement', (node) => {
+        // Narrow the type to Element
+        if (node instanceof Element && node.hasAttribute('style')) {
+          node.removeAttribute('style');
+        }
+      });
+
+      const clean = DOMPurify.sanitize(currentProduct?.description, {
+        USE_PROFILES: { html: true },
+      });
+      setCleanHtml(clean);
+    })();
   }, [currentProduct?.description]);
 
   return (
@@ -209,32 +215,45 @@ export default function Home() {
         <div className="px-3 space-y-4">
         <p className="max-w-sm">{currentProduct?.name}</p>
         <div className="flex items-center gap-5">
-    <span className="font-semibold">
+    <span className="font-semibold text-md">
         {Number(currentProduct.discountedPrice).toLocaleString("en-NG", {
           style: "currency",
           currency: "NGN",
           minimumFractionDigits: 0,
         })}
       </span>
-      <span className="text-gray-400 line-through text-sm">
+      <span className="text-gray-400 line-through text-sm text-md">
         {Number(currentProduct.retailPrice).toLocaleString("en-NG", {
           style: "currency",
           currency: "NGN",
           minimumFractionDigits: 0,
         })}
       </span>
-      <span className="text-xs bg-primary dark:bg-primary-dark text-text-dark dark:text-text px-1 rounded-lg">-{Math.round(((currentProduct?.retailPrice - currentProduct?.discountedPrice) / currentProduct?.retailPrice) * 100)}%
+      <span className="text-xs bg-primary dark:bg-primary-dark text-text-dark px-1 rounded-lg">-{Math.round(((currentProduct?.retailPrice - currentProduct?.discountedPrice) / currentProduct?.retailPrice) * 100)}%
       </span>
 
     </div>
     {currentProduct?.description && (
   <div
-    className="text-text dark:text-text-dark w-full"
-    style={{ backgroundColor: 'transparent', color: 'inherit' }}
-    dangerouslySetInnerHTML={{ __html: cleanDescription }}
+  className="prose dark:prose-invert max-w-none w-full break-words whitespace-normal text-text dark:text-text-dark h-72 overflow-auto"
+  style={{
+    backgroundColor: 'transparent',
+    color: 'inherit',
+  }}
+    dangerouslySetInnerHTML={{ __html: cleanHtml }}
   />
 )}
         </div>
+<div className="py-5">
+ {groupedArray?.map((group:any,idx:number) => (
+  <div className="" key={idx}>
+<p>{group?.variantType}</p>
+  </div>
+  
+ ))}
+
+</div>
+
       </SheetContent>
     </Sheet>
     </main>

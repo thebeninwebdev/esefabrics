@@ -1,11 +1,16 @@
 import mongoose,{Schema, models} from 'mongoose'
-import { IProduct, IImage } from '@/app/types';
+import { IProduct, IImage, IVariantArray } from '@/app/types';
 
 const ImageSchema = new Schema<IImage>({
   id: {type: String, required: true},
   url: { type: String, required: true },
   color: String,
 });
+
+const VariantArraySchema = new Schema<IVariantArray>({
+  variantType:{type:String, required:true},
+  subVariant:{type:String, required:true}
+})
 
 const ProductSchema = new Schema<IProduct>(
   {
@@ -16,7 +21,8 @@ const ProductSchema = new Schema<IProduct>(
     brand: { type: String, required: true },
     stock: { type: Number, required: true },
     categories: [{ type: String, required: true }],
-    images: [ImageSchema], // Array of images with optional color and size
+    variantArray: [VariantArraySchema],
+    images: [ImageSchema],
   },
   { timestamps: true }
 );
