@@ -18,7 +18,7 @@ import { Eye } from "lucide-react";
 import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
 import Link from "next/link"
-import { IProduct, IImage, GroupedVariant } from '@/app/types';
+import { IProduct, IImage, GroupedVariant, CartItem } from '@/app/types';
 
 import {
   Sheet,
@@ -62,7 +62,7 @@ const DiscoveryCard = () => {
 };
 
 export default function Home() {
-  const {categories, fetchCategories, products, fetchProducts, selectedVariant} = useAppContext()
+  const {categories, fetchCategories, products, fetchProducts, addToCart, removeFromCart, updateQuantity, cart, variants, setVariants,} = useAppContext()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [drawerId, setDrawerId] = useState("")
   const [cleanHtml, setCleanHtml] = useState('');
@@ -107,7 +107,7 @@ export default function Home() {
   }, [currentProduct?.description]);
 
   return (
-    <main className=" w-full">
+    <main className="text-text dark:text-text-dark w-full">
       <div className="p-3 sm:p-5">
       <HomeSlider/>
       </div>
@@ -194,7 +194,7 @@ export default function Home() {
     </div>
     <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
     <SheetTitle>Quick view</SheetTitle>
-      <SheetContent className="space-y-5 p-0 bg-background dark:bg-background-dark overflow-y-auto">
+      <SheetContent className="space-y-5 p-0 bg-background dark:bg-background-dark overflow-y-auto text-text dark:text-text-dark">
         <div className="overflow-auto pt-8 w-full">
         <div className="flex w-max gap-3">
         {drawerId && currentProduct?.images?.map((image:IImage,index:number) => (
@@ -238,22 +238,33 @@ export default function Home() {
   }}
     dangerouslySetInnerHTML={{ __html: cleanHtml }}
   />
-)}
-        </div>
+)}</div>
 <div className="py-5 px-3 space-y-5">
  {groupedArray?.map((group,idx:number) => (
   <div className="" key={idx}>
     <div className="flex justify-between">
       <div className="flex w-max gap-4">
     <p>{group?.variantType[0].toUpperCase()+group?.variantType.slice(1)}:</p>
-    {group?.variantType === "size" &&<p className="">{selectedVariant.toUpperCase()}</p>}
+    {
+    <p className="">{variants.find((variant:any) => variant.variantType === group?.variantType)?.variant.toUpperCase()}</p>}
     </div>
     {group?.variantType === "size" && <SizeChart />}
     </div>
-    
     <Variant subVariants={group?.variants} variantType={group?.variantType}/>
   </div>
  ))}
+ {cart.find((item:CartItem) => item._id === currentProduct._id) ?<div className="flex justify-between w-36 py-2 px-4 h-max text-2xl font-thin items-center text-text bg-neutral-300 rounded-md ">
+   <button onClick={() => updateQuantity(currentProduct._id,1)} className="">-</button>
+   <span className="text-lg font-normal">{cart.find((item:CartItem) => item._id === currentProduct._id).quantity}</span>
+   <button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})}>+</button>
+ </div>
+ :<Button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})} className="w-full text-text-dark py-6">Add to cart</Button>
+ }
+
+ <div className="pt-10">
+ <Link href="/" className="underline">View full details</Link>
+ </div>
+ 
 </div>
       </SheetContent>
     </Sheet>

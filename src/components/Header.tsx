@@ -1,3 +1,5 @@
+'use client'
+
 import { Menus } from "@/lib/utils";
 import {DesktopMenu} from "./DesktopMenu";
 import {MobMenu} from "./MobileMenu";
@@ -5,9 +7,11 @@ import Image from "next/image";
 import ThemeSwitch from "./Themeswitch";
 import { CiShoppingCart } from "react-icons/ci";
 import Link from "next/link";
-
+import { useAppContext } from "@/context";
+import { Badge } from "./ui/badge";
 
 export default function Header() {
+  const {cart} = useAppContext()
   return (
     <div>
       <header className="h-16 text-[15px] fixed inset-0 flex-center bg-background dark:bg-background-dark bg- z-10 shadow-lg">
@@ -32,8 +36,9 @@ export default function Header() {
             </div>
             <div
               aria-label="Shopping cart"
-              className="bg-white/5 relative p-[.2rem] shadow rounded-full flex-center"
+              className="bg-white/5 relative p-[.2rem] shadow rounded-full flex-center flex gap-2 cursor-pointer"
             >
+              <Badge className="text-text-dark">{cart?.length}</Badge>
             <CiShoppingCart className="w-5 h-5"/>
             </div>
             <div className="lg:hidden">

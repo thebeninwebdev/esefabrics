@@ -9,10 +9,13 @@ import { FaSpinner } from 'react-icons/fa'
 import Image from "next/image"
 import { CiTrash } from "react-icons/ci"
 import { useAppContext } from "@/context"
-import { ColorPicker } from "./ColorPicker"
+import { Checkbox} from "@/components/ui/checkbox"
 import "react-quill-new/dist/quill.snow.css"
 import "@/styles/quill-custom.css";
 import { useLoading } from '@/context/LoadingContext'
+import {Label} from '@/components/ui/label'
+import { VariationInterface } from "@/app/types"
+import { Pencil, Trash2 } from "lucide-react"
 
 // Dynamically import ReactQuill to prevent SSR issues
 const ReactQuill = dynamic(() => import("react-quill-new"), {
@@ -26,12 +29,18 @@ interface Image {
   color?: string;
 }
 
+
+
+const emptyVariation: VariationInterface = {
+  retailPrice: '',
+  discountedPrice: '',
+  variantType: '',
+  subVariant: '',
+  stock: '',
+};
+
 export function NewProductForm() {
   const {variants, fetchVariants, categories, fetchCategories} = useAppContext();
-  const [color, setColor] = useState("")
-  const [selectedVariant, setSelectedVariant] = useState("");
-  const [subVariantSelected, setSubVariantSelected] = useState("")
-  const [variantArray, setVariantArray] = useState<{variantType:string,subVariant:string}[]>([])
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [brand, setBrand] = useState<string>("");
@@ -39,11 +48,14 @@ export function NewProductForm() {
   const [discountedPrice, setDiscountedPrice] = useState<string>("");
   const [stock, setStock] = useState<string>("");
   const [images, setImages] = useState<{ 
-    Id:string; image: any; variantType?: string; variant?: string; url:string }[]>([]);
+    Id:string; image: any; url:string }[]>([]);
   const [ category, setCategory] = useState<string>("")
   const [categoriesArray, setCategoriesArray] = useState<{category:string,_id: string}[]>([]);
   const {isLoading, setLoading} = useLoading();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [variations, setVariations] = useState<VariationInterface[]>([])
+  const [isVariant, setIsVariant] = useState<boolean>(false)
+  const [variationValues, setVariationValues] = useState<VariationInterface>(emptyVariation)
 
   useEffect(() => {
     fetchVariants()
@@ -59,6 +71,17 @@ export function NewProductForm() {
       });
     };
   }, [images]);
+  
+
+  const handleEdit = (variation: VariationInterface, index: number) => {
+    setVariationValues(variation)
+    setVariations(variations.filter((_, i) => i !== index))
+    setIsVariant(true)
+  }
+
+  const handleDeleteVariation = (index: number) => {
+    setVariations(variations.filter((_, i) => i !== index))
+  }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -83,7 +106,7 @@ export function NewProductForm() {
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
-        body: JSON.stringify({ name, description, brand, retailPrice, discountedPrice, stock, images, categories:categoryNames, variantArray}),
+        body: JSON.stringify({ name, description, brand, retailPrice, discountedPrice, stock, images, categories:categoryNames}),
       });
   
       const data = await response.json();
@@ -92,6 +115,23 @@ export function NewProductForm() {
         toast.error(data.message || "Something went wrong");
         return;
       }
+
+      if(variations.length > 0){
+        const res = await fetch('/api/variation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json'},
+          body: JSON.stringify({Variations: {reference_id: data.product._id,variations}}),
+        });
+    
+        const finalData = await res.json();
+  
+          
+        if (!res.ok) {
+          toast.error(finalData.message || "Something went wrong");
+          return;
+        }
+      }
+
   
       toast.success("Product added successfully");
       setName("")
@@ -99,14 +139,13 @@ export function NewProductForm() {
       setDescription("")
       setCategory("")
       setCategoriesArray([])
-      setColor("")
       setDiscountedPrice("")
       setRetailPrice("")
       setImages([])
-      setSelectedVariant("")
+      setVariationValues(emptyVariation)
       setStock("")
-      setSubVariantSelected("")
-      setVariantArray([])
+      setVariations([])
+
     } catch (error) {
       console.error(error);
       toast.error("Please check your internet connection");
@@ -156,7 +195,6 @@ export function NewProductForm() {
       {
       Id:crypto.randomUUID(),
       image:base64,
-      color: color || "",
       url:objectUrl
     }
     ])
@@ -174,13 +212,6 @@ export function NewProductForm() {
     const filteredCategoriesArray = categoriesArray.filter((item:{category:string,_id: string}) => (item._id !== value))
     setCategoriesArray([...filteredCategoriesArray ])
     if(filteredCategoriesArray.length < 1) setCategory("")
-  }
-  const handleDeleteVariant = (value:string) => {
-    if(!(variantArray.find((item:{subVariant:string,}) => (item.subVariant === value)))) return
-
-    const filteredVariantArray = variantArray.filter((item:{subVariant:string}) => (item.subVariant !== value))
-    setVariantArray([...filteredVariantArray ])
-    if(filteredVariantArray.length < 1) setCategory("")
   }
 
   return (
@@ -237,43 +268,53 @@ export function NewProductForm() {
         onChange={(e) => setStock(e.target.value)} 
         required />
       </div>
-      <div className="text-xs flex flex-col gap-2">
+      <div className="flex items-center space-x-2">
+      <Checkbox 
+        id="product-variation" 
+        checked={isVariant}
+        onCheckedChange={(checked) => setIsVariant(!!checked)}
+        className="data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500"
+      />
+      <Label 
+        htmlFor="product-variation" 
+        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      >
+        Is there a variation?
+      </Label>
+    </div>
+      {isVariant && <><div className="text-xs flex flex-col gap-2">
         <label className="font-medium">
           <span>Pick variants</span>
         </label>
         <select 
         className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent dark:bg-[#1a1a1a]"
-        value={selectedVariant}
-        onChange={(e)=> setSelectedVariant(e.target.value)}
+        value={variationValues.variantType}
+        onChange={(e)=> {
+          setVariationValues((prevState:VariationInterface) => ({...prevState,variantType:e.target.value}))
+        }}
         >
           <option value="">{!variants?"loading...":"Select a variant"}</option>
           {variants?.map(({variantType}:{variantType:string},idx:number) => {
             return(
-              <option value={variantType.toUpperCase()} key={idx} className="">
+              <option value={variantType} key={idx} className="">
                 {variantType.toUpperCase()}
               </option>
             )})}
         </select>
         {
-          (selectedVariant || variants?.find((variant:any) => variant._id === selectedVariant)) &&
+          (variationValues?.variantType || variants?.find((variant:any) => variant?.subVariant == variationValues?.subVariant)) &&
           <div>
             {
-              <select className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent dark:bg-[#1a1a1a] w-full mt-5" value={subVariantSelected} onChange={(e)=> {
+              <select className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent dark:bg-[#1a1a1a] w-full mt-5" value={variationValues.subVariant} onChange={(e)=> {
 
-                if(variantArray.find((item:any) => item.subVariant.toLowerCase() === e.target.value.toLowerCase())) return
+                if(variationValues.subVariant == e.target.value) return
 
                 if(e.target.value === "") return
-
-                  setVariantArray((prevState:any) => (
-                    [...prevState,{variantType:selectedVariant,
-                      subVariant:e.target.value
-                    }]
-                  ))
-                  setSubVariantSelected(e.target.value)
+                  setVariationValues((prevState:VariationInterface) => ({...prevState,subVariant:e.target.value}))
                 }}
                   >
                   <option value="">Select a sub variant</option>
-                  {variants?.find((variant:any) => variant._id === selectedVariant)?.subVariant.map((key:string,index:number) => {
+                  {variants?.find((variant:any) => variant.variantType === variationValues.variantType)?.subVariant.map((key:string,index:number) => {
                       return(
                         <option value={key} key={index} className="">
                         {key.toUpperCase()}
@@ -283,17 +324,117 @@ export function NewProductForm() {
                 </select>
             }
           </div>}
-          <div className="w-full flex flex-wrap gap-4 p-4 border-b-[1px] text-slate-200">
-          {variantArray?.map((
-            {subVariant}:{subVariant:string},idx:number) => {
-          return(
-            <span key={idx} className="cursor-pointer rounded-md bg-gray-300 dark:bg-gray-700 flex items-center gap-2 px-2 py-1 text-neutral-700 dark:text-slate-200" onClick={() => {
-              handleDeleteVariant(subVariant)
-            }}>{subVariant.toUpperCase()}<IoIosClose className=""/></span>
-          )
-        })}
       </div>
+      <div className="text-xs flex flex-col gap-2">
+        <label className="font-medium">
+          <span>Retail Price</span>
+        </label>
+        <input type="number" placeholder="3000" className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent" value={variationValues.retailPrice} 
+        onChange={(e) => 
+          setVariationValues(
+            (prevState:VariationInterface) => 
+            ({...prevState,retailPrice:e.target.value})
+            )} 
+        />
       </div>
+      {/* Discounted Price FIELD */}
+      <div className="text-xs flex flex-col gap-2">
+        <label className="font-medium">
+          <span>Discounted Price</span>
+        </label>
+        <input type="number" placeholder="2800" className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent" value={variationValues?.discountedPrice} 
+        onChange={(e) => 
+          setVariationValues(
+            (prevState:VariationInterface) => 
+            ({...prevState,discountedPrice:e.target.value})
+            )} 
+         />
+      </div>
+      {/* Stock FIELD */}
+      <div className="text-xs flex flex-col gap-2">
+        <label className="font-medium">
+          <span>Quantity in stock</span>
+        </label>
+        <input 
+        type="number" 
+        placeholder="50" 
+        className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent" 
+        value={variationValues?.stock} 
+        onChange={(e) => 
+          setVariationValues(
+            (prevState:VariationInterface) => 
+            (
+              {...prevState,stock:e.target.value})
+            )} 
+         />
+      </div>
+      <span onClick={() => {
+        if(!variationValues?.variantType || !variationValues?.subVariant || !variationValues?.retailPrice || !variationValues?.discountedPrice || !variationValues?.stock) {
+          toast.error("All fields are required")
+          return
+        }
+        setVariations((prevState) => [...prevState,variationValues])
+        setVariationValues(emptyVariation)
+        setIsVariant(false)
+        }} className="text-sm bg-blue-500 text-slate-200 px-3 py-2 my-5 block w-max rounded-md cursor-pointer hover:opacity-80">Add Variation</span></>
+        }
+        {variations.length > 0 && <div className="space-y-4">
+      {variations.map((variation, index) => (
+        <div 
+          key={index} 
+          className="shadow-md rounded-lg p-4 border border-primary hover:shadow-lg transition-shadow duration-300 relative text-text dark:text-text-dark"
+        >
+          <div className="absolute top-4 right-4 flex space-x-2">
+            <button 
+              onClick={() => handleEdit(variation, index)}
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+              aria-label="Edit Variation"
+            >
+              <Pencil size={20} />
+            </button>
+            <button 
+              onClick={() => handleDeleteVariation(index)}
+              className="text-gray-600 hover:text-red-600 transition-colors"
+              aria-label="Delete Variation"
+            >
+              <Trash2 size={20} />
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-4 pr-10">
+            <div>
+              <p className="font-semibold">Variation Type:</p>
+              <p className="">{variation.variantType || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="font-semibold">Sub Variant:</p>
+              <p className="">{variation.subVariant || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="font-semibold">Retail Price:</p>
+              <p className="text-green-600">{Number(variation.retailPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        }) || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="font-semibold">Discounted Price:</p>
+              
+              <p className="text-red-600">
+              {Number(variation.discountedPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        }) || 'N/A'}</p>
+            </div>
+            <div className="col-span-2">
+              <p className="font-semibold">Stock:</p>
+              <p className="text-blue-600">{variation.stock || 'N/A'} units</p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>}
       <div className="text-xs flex flex-col gap-2">
         <label className="font-medium">
           <span>categoriesArray</span>
@@ -317,8 +458,6 @@ export function NewProductForm() {
       </div>
       </div>
       <div className="text-xs">
-        <div className="flex gap-2 items-center">
-        <ColorPicker value={color} onChange={(e) => setColor(e)} className="w-5 h-5"/> Is it a colour?</div>
           <input 
           className="border-2 p-2 rounded-md border-complement outline-none placeholder:text-text tracking-wider dark:border-complement-dark dark:placeholder:text-text-dark bg-transparent dark:bg-[#1a1a1a] mt-3 w-full" 
           type="file"

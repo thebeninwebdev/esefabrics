@@ -2,25 +2,26 @@
 import { useAppContext } from "@/context";
 
 export const Variant = ({ subVariants, variantType }: { subVariants: string[], variantType: string }) => {
-  const { selectedVariant, setSelectedVariant } = useAppContext();
+  const { addVariant, variants } = useAppContext();
 
   return (
     <div className="flex gap-3 flex-wrap w-full py-2">
       {subVariants?.map((subVariant, idx: number) => {
-        const isSelected = selectedVariant === subVariant && variantType === "size";
+        const foundVariant = variants.find((variant:any) => variant.variant === subVariant)
+        const isSelected = foundVariant
         const isSize = variantType === "size";
 
         const baseClass = isSize
-          ? "flex justify-center text-sm items-center w-11 h-11 border rounded-full hover:border-primary cursor-pointer ease-in-out transition-colors duration-700"
-          : "";
+          ? "w-11 h-11 rounded-full"
+          : "py-2 px-3 rounded-md";
 
         const selectedClass = isSelected ? "bg-primary text-text-dark" : "";
 
         return (
           <span
             key={idx}
-            onClick={() => setSelectedVariant(subVariant)}
-            className={`${baseClass} ${selectedClass}`}
+            onClick={() => addVariant({variantType,variant:subVariant})}
+            className={`${baseClass} ${selectedClass} flex justify-center text-sm items-center cursor-pointer ease-in-out transition-colors duration-700 border hover:border-primary`}
           >
             {subVariant.toUpperCase()}
           </span>

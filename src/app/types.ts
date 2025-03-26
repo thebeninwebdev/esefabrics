@@ -14,6 +14,29 @@ interface SubMenuItem {
     color?: string;
   }
 
+  export type CartItem = {
+    _id: string;
+    title: string;
+    quantity: number;
+    price: number;
+    image: string;
+    variants?: Variant[];
+  };
+
+  export interface Variant{
+    variantType: string;
+    variant: string;
+  }
+
+  export interface VariationInterface {
+    reference_id?:string; 
+    retailPrice: string; 
+    discountedPrice: string; 
+    variantType: string; 
+    subVariant: string, 
+    stock:string
+  }
+
   export type GroupedVariant = {
       variantType: string;
       variants: string[];
