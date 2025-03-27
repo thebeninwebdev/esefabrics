@@ -1,6 +1,6 @@
 "use client"
 
-import { CartItem, Variant } from '@/app/types';
+import { CartItem, Variant, VariationInterface } from '@/app/types';
 import React, {createContext, useContext, useState} from 'react'
 
 const AppContext = createContext<any>(undefined)
@@ -17,6 +17,8 @@ export function AppWrapper({children}: {
     const [products, setProducts] = useState([])
     const [selectedVariant, setSelectedVariant] = useState([])
     const [cart, setCart] = useState<CartItem[]>([])
+    const [variations, setVariations] = useState<VariationInterface[]>([])
+
 
     const addVariant = (item:Variant) => {
       
@@ -69,6 +71,21 @@ export function AppWrapper({children}: {
         );
       };
 
+      const fetchVariations = async () => {
+        try {
+          const response = await fetch('/api/variation') 
+
+          if(!response.ok){
+           console.log('failed to fetch categories')
+          }
+
+          const data = await response.json()
+          setVariations(data.variations)
+       } catch (error) {
+           console.log(error)
+       }
+      }
+
     const fetchProducts = async () => {
         try {
            const response = await fetch('/api/products') 
@@ -115,7 +132,7 @@ export function AppWrapper({children}: {
         }
     }
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations}}>
             {children}
         </AppContext.Provider>
     )
