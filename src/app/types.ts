@@ -20,10 +20,11 @@ interface SubMenuItem {
     quantity: number;
     price: number;
     image: string;
-    variants?: Variant[];
+    variant?: Variant;
   };
 
   export interface Variant{
+    reference_id: string;
     variantType: string;
     variant: string;
   }

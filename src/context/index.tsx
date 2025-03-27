@@ -18,6 +18,7 @@ export function AppWrapper({children}: {
     const [selectedVariant, setSelectedVariant] = useState([])
     const [cart, setCart] = useState<CartItem[]>([])
     const [variations, setVariations] = useState<VariationInterface[]>([])
+    const [isCartSelection, setIsCartSelection] = useState<boolean>(false)
 
 
     const addVariant = (item:Variant) => {
@@ -37,26 +38,45 @@ export function AppWrapper({children}: {
     const addToCart = (item: CartItem) => {
         setCart((prevCart) => {
 
-          const existing = prevCart.find(
-            (i) =>
-              i._id === item._id 
-          );
-    
-          if (existing) {
-            return prevCart.map((i) =>
-              i._id === item._id
-                ? { ...i, quantity: i.quantity + item.quantity }
-                : i
+          if(item?.variant){
+            const duplicate = prevCart.find(
+              (i) =>
+                i?.variant?.reference_id === item.variant?.reference_id 
+            ); 
+            if(duplicate){
+              return prevCart.map((i) =>
+                i?.variant?.reference_id === item.variant?.reference_id
+                  ? { ...i, quantity: i.quantity + item.quantity }
+                  : i
+              );
+            }
+            return [...prevCart, {...item}];
+          }else{
+            const existing = prevCart.find(
+              (i) =>
+                i._id === item._id 
             );
+      
+            if (existing) {
+              return prevCart.map((i) =>
+                i._id === item._id
+                  ? { ...i, quantity: i.quantity + item.quantity }
+                  : i
+              );
+            }
+  
+            return [...prevCart, {...item}];
           }
-
-          return [...prevCart, {...item}];
         });
-        setVariants([])
       };
     
-      const removeFromCart = (productId: string) => {
-        setCart((prevCart) => prevCart.filter((i) => i._id !== productId));
+      const removeFromCart = (productId: string, reference_id:string) => {
+        if(!reference_id){
+          setCart((prevCart) => prevCart.filter((i) => i._id !== productId));
+        }else{
+          setCart((prevCart) => prevCart.filter((i) => i.variant?.reference_id !== reference_id));
+        }
+        
       };
     
       const clearCart = () => {
@@ -132,7 +152,7 @@ export function AppWrapper({children}: {
         }
     }
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations, isCartSelection, setIsCartSelection}}>
             {children}
         </AppContext.Provider>
     )

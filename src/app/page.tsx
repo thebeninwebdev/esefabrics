@@ -25,6 +25,7 @@ import {
   SheetContent,
   SheetTitle
 } from "@/components/ui/sheet"
+import VariationModal from "@/components/VariationModal";
 
 const CategoryCard = ({ title, image }:{
   title:string, image:string}) => {
@@ -60,7 +61,7 @@ const DiscoveryCard = () => {
 };
 
 export default function Home() {
-  const {categories, fetchCategories, products, fetchProducts, addToCart, updateQuantity, cart, variants, fetchVariations, variations} = useAppContext()
+  const {categories, fetchCategories, products, fetchProducts, addToCart, updateQuantity, cart, variants, fetchVariations, variations, isCartSelection, setIsCartSelection} = useAppContext()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [drawerId, setDrawerId] = useState("")
   const [cleanHtml, setCleanHtml] = useState('');
@@ -234,7 +235,9 @@ export default function Home() {
               )}
             </div>
             <div className="py-5 px-3 space-y-5">
-              <div className="">
+            {
+                variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id) &&
+<div className="">
                 <div className="flex justify-between">
                   <div className="flex w-full">
                     <div className="flex justify-between w-full">
@@ -243,24 +246,31 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+                <div className="flex flex-wrap gap-2 pt-3">
                 {variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.map((variation:any,idx:number) => (
-                  <div key={idx} className="py-2 px-3 rounded-md border-primary border-2 dark:bg-primary-dark dark:text-text-dark text-text w-max">
+                  <div key={idx} className="py-1 px-3 rounded-md border-primary border-2 dark:bg-primary-dark dark:text-text-dark text-text w-max">
                     {variation?.subVariant}
                   </div>
                 ))}
+                </div>
+                <VariationModal variationsArray={variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations} currentProduct={currentProduct} />
               </div>
+                
+              }
+              
 
               {cart.find((item:CartItem) => item._id === currentProduct._id) ? (
                 <div className="flex justify-between w-36 py-2 px-4 h-max text-2xl font-thin items-center text-text bg-neutral-300 rounded-md ">
-                  <button onClick={() => updateQuantity(currentProduct._id,1)} className="">-</button>
+                  <button onClick={() => setIsCartSelection(true)} className="">-</button>
                   <span className="text-lg font-normal">{cart.find((item:CartItem) => item._id === currentProduct._id)?.quantity}</span>
-                  <button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})}>+</button>
+                  <button onClick={() => setIsCartSelection(true)}>+</button>
                 </div>
               ) : (
-                <Button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})} className="w-full text-text-dark py-6">
+                <Button onClick={() => setIsCartSelection(true)} className="w-full text-text-dark py-6">
                   Add to cart
                 </Button>
               )}
+              
 
               <div className="pt-10">
                 <Link href="/" className="underline">View full details</Link>
