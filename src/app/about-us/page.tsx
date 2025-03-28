@@ -1,6 +1,65 @@
-import React from 'react'
+'use client'
+
+import React, { useState } from 'react';
+import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+// Sample review data 
+const reviews = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    rating: 5,
+    date: "March 15, 2024",
+    comment: "Absolutely amazing product! Exceeded all my expectations. The quality is outstanding and it arrived much faster than I anticipated.",
+    avatar: "/api/placeholder/40/40"
+  },
+  {
+    id: 2,
+    name: "Michael Chen",
+    rating: 4,
+    date: "February 28, 2024",
+    comment: "Great product with excellent customer service. Minor packaging issue, but the team resolved it quickly.",
+    avatar: "/api/placeholder/40/40"
+  },
+  {
+    id: 3,
+    name: "Emily Rodriguez",
+    rating: 5,
+    date: "January 10, 2024",
+    comment: "I've been recommending this to all my friends. The design is sleek and functional. Truly a top-notch product!",
+    avatar: "/api/placeholder/40/40"
+  }
+];
 
 export default function page() {
+    const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+
+  const handleNextReview = () => {
+    setCurrentReviewIndex((prev) => 
+      (prev + 1) % reviews.length
+    );
+  };
+
+  const handlePrevReview = () => {
+    setCurrentReviewIndex((prev) => 
+      prev === 0 ? reviews.length - 1 : prev - 1
+    );
+  };
+
+  const renderStars = (rating:number) => {
+    return Array.from({ length: 5 }, (_, index) => (
+      <Star 
+        key={index} 
+        className={`h-5 w-5 ${index < rating ? 'text-yellow-500' : 'text-gray-300'}`} 
+        fill={index < rating ? 'currentColor' : 'none'}
+      />
+    ));
+  };
+
+  const currentReview = reviews[currentReviewIndex];
+
   return (
     <div className='space-y-5'>
         <div className='relative h-[400px] w-full bg-cover bg-center' style={{backgroundImage: "url('/about-us.jpg')"}}>
@@ -55,6 +114,80 @@ export default function page() {
                 
             </div>
         </div>
+        <div className="container mx-auto px-4 py-16">
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+                <div className="w-full aspect-square">
+                    <img
+                        src="/founder.jpg"
+                        alt="Our Story"
+                        className='w-full h-full object-cover rounded-lg shadow-lg'
+                    />
+                </div>
+                <Card className="w-full max-w-xl mx-auto shadow-lg">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold text-gray-800">
+          Customer Reviews
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="relative">
+        {/* Review Navigation Buttons */}
+        <button 
+          onClick={handlePrevReview} 
+          className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full"
+        >
+          <ChevronLeft className="h-6 w-6 text-gray-600" />
+        </button>
+        <button 
+          onClick={handleNextReview} 
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 hover:bg-gray-100 rounded-full"
+        >
+          <ChevronRight className="h-6 w-6 text-gray-600" />
+        </button>
+
+        {/* Review Content */}
+        <div className="text-center">
+          <div className="flex justify-center items-center mb-4">
+            <Avatar className="mr-4">
+              <AvatarImage src={currentReview.avatar} alt={currentReview.name} />
+              <AvatarFallback>{currentReview.name.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800">
+                {currentReview.name}
+              </h3>
+              <p className="text-sm text-gray-500">
+                {currentReview.date}
+              </p>
+            </div>
+          </div>
+
+          {/* Star Rating */}
+          <div className="flex justify-center mb-4">
+            {renderStars(currentReview.rating)}
+          </div>
+
+          {/* Review Text */}
+          <p className="text-gray-700 italic mx-4 mb-4">
+            "{currentReview.comment}"
+          </p>
+
+          {/* Review Indicators */}
+          <div className="flex justify-center space-x-2">
+            {reviews.map((_, index) => (
+              <span 
+                key={index} 
+                className={`h-2 w-2 rounded-full ${
+                  index === currentReviewIndex ? 'bg-blue-500' : 'bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+            </div>
+        </div>
+
         </main>
 
     </div>
