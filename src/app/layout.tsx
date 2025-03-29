@@ -14,6 +14,8 @@ import { LoadingProvider, useLoading } from "@/context/LoadingContext";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
 import GlobalLoader from "@/components/GlobalLoader"
+import Footer from "@/components/Footer";
+import ClothingCTA from "@/components/CTA";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,6 +51,10 @@ export default function RootLayout({
           </Wrapper>
         <div className="text-text dark:text-text-dark w-full h-full text bg-background dark:bg-background-dark pt-[63.99px]">
           {children}
+          <Wrapper path="/admin">
+          <ClothingCTA />
+          <Footer/>
+          </Wrapper>
         </div>
         <Wrapper path="/auth">
         <BottomNav/>

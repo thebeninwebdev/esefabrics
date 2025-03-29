@@ -2,11 +2,11 @@ import React from 'react'
 
 export default function page() {
   return (
-    <div className="">
-        <header className='bg-primary text-text-dark text-center py-14 text-2xl'>
-            <h1>Privacy Policy</h1>
-        </header>
-        <main className='space-y-8 px-5 py-10 max-w-3xl mx-auto w-full'>
+    <div className="max-w-3xl mx-auto px-4 py-10">
+      <div className='bg-primary text-text-dark text-center py-14 text-2xl mb-10'>
+      <h1 className="text-3xl font-bold mb-6">Delivery & Return Policy</h1>
+      </div>
+        <main className='space-y-8 mb-8'>
             <h2 className='text-lg font-bold'>The Company Private Limited Policy</h2>
             <div className='space-y-5'>
                 <p>The Company Private Limited and each of their respective subsidiary, parent and affiliated companies is deemed to operate this website ("we" or "us") recognizes that you care how information about you is used and shared. We have created this Privacy Plicy to inform you what information we collect on the website, how we use your information and the choices you have about the way your information is collected and used. Please reacd this Privacy Policy carefully. Your use of the website indicates that you have read andn accepted our privacy practices, as outlined in this Privacy Policy.</p>

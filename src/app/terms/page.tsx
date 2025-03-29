@@ -1,56 +1,98 @@
-// terms.tsx
+// app/terms/page.tsx
 
-"use client";
-
-import Link from "next/link";
 import React from "react";
 
-export default function Terms() {
+export const metadata = {
+  title: "Terms & Conditions - Esefabrics",
+  description: "Review the terms and conditions for using Esefabrics, your trusted eCommerce destination.",
+};
+
+export default function TermsPage() {
   return (
-    <div className="max-w-4xl mx-auto p-6 text-text dark:text-text-dark">
-      <h1 className="text-3xl font-bold mb-4 text-primary dark:text-primary-dark pb-10">Terms of Service</h1>
+    <main className="max-w-3xl mx-auto px-4 py-10">
+      <div className='bg-primary text-text-dark text-center py-14 text-2xl mb-10'>
+      <h1 className="text-3xl font-bold mb-6">Terms & Conditions</h1>
+      </div>
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">1. Acceptance of Terms</h2>
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">1. Introduction</h2>
         <p>
-          By accessing or using our website, you agree to comply with these Terms of Service. If you do not agree with any part of these terms, you are advised not to use our website.
+          Welcome to Esefabrics. By accessing our website and placing an order, you agree to be bound by the following Terms and Conditions. Please read them carefully. If you do not agree with any part of these terms, you must refrain from using our services.
         </p>
       </section>
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">2. Intellectual Property</h2>
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">2. Eligibility</h2>
         <p>
-          All content, including text, images, graphics, and design elements on this site, is the intellectual property of our company. You are prohibited from copying, distributing, or creating derivative works from this content without explicit permission. Unauthorized use of our intellectual property may result in legal action.
+          To shop on Esefabrics, you must be at least 18 years old or have parental consent. By using our site, you represent that you meet this requirement and have the legal capacity to enter into a binding contract.
         </p>
       </section>
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">3. User Data and Privacy</h2>
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">3. Product Information</h2>
         <p>
-          The login form on this website collects basic information for demo purposes only. We do not use or share your information for any unauthorized or illegal purposes. Please review our Privacy Policy to understand more about how your data is handled.
+          We strive to provide accurate descriptions and images of our products. However, colors may appear slightly different due to screen settings. All products are subject to availability, and we reserve the right to withdraw items at any time.
         </p>
       </section>
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">4. Limitation of Liability</h2>
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">4. Pricing & Payments</h2>
         <p>
-          Our website is provided for informational and demonstrative purposes only. We are not liable for any loss or damage incurred by the user from reliance on the site’s information or functionalities. This site does not represent a fully functional product.
+          All prices are listed in Nigerian Naira (₦) unless otherwise stated. We reserve the right to change prices at any time without prior notice. Payment must be made in full at checkout using our accepted payment methods. Esefabrics is not responsible for any additional bank charges or currency conversion fees.
         </p>
       </section>
 
-      <section className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">5. Changes to Terms</h2>
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">5. Order Processing & Shipping</h2>
         <p>
-          We reserve the right to update or modify these Terms of Service at any time. Any changes will be effective upon posting to this page. Continued use of the site after changes implies acceptance of the revised terms.
+          Orders are processed within 1–2 business days. You will receive a confirmation email once your order has been shipped, along with tracking information. Delivery times vary depending on your location. For full details, please refer to our <a href="/delivery-return-policy" className="text-blue-600 underline">Delivery & Return Policy</a>.
         </p>
       </section>
 
-      <p className="mt-4 text-sm">
-        If you have any questions about these Terms of Service, please{" "}
-        <Link href="https://wa.link/5my8vf" className="text-primary dark:text-primary-dark hover:underline">
-          contact us
-        </Link>.
-      </p>
-    </div>
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">6. Returns & Refunds</h2>
+        <p>
+          We accept returns within 7 days of delivery, provided the item is unused and in original condition. Refunds are issued to the original payment method within 5–7 business days of approval. Return shipping costs are the responsibility of the customer unless the item is faulty or incorrect.
+        </p>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">7. User Conduct</h2>
+        <p>
+          You agree not to misuse our website, post misleading information, or engage in any activity that may harm Esefabrics, its customers, or third parties. We reserve the right to suspend or terminate accounts that violate these terms.
+        </p>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">8. Intellectual Property</h2>
+        <p>
+          All content on Esefabrics, including text, images, logos, and designs, is the property of Esefabrics and is protected by copyright laws. You may not use or reproduce our content without written permission.
+        </p>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">9. Limitation of Liability</h2>
+        <p>
+          Esefabrics shall not be held liable for any indirect, incidental, or consequential damages resulting from the use of our website or products. We do not guarantee that our website will be error-free or uninterrupted.
+        </p>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-2">10. Changes to Terms</h2>
+        <p>
+          We may update these Terms & Conditions from time to time. Any changes will be posted on this page with the revised date. Your continued use of the website constitutes acceptance of the updated terms.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-2">11. Contact Us</h2>
+        <p>
+          If you have any questions about these Terms and Conditions, please reach out to us at{" "}
+          <a href="mailto:support@esefabrics.com" className="text-blue-600 underline">
+            support@esefabrics.com
+          </a>.
+        </p>
+      </section>
+    </main>
   );
 }
