@@ -106,7 +106,7 @@ export default function Footer() {
     </li>
     <li>
       <Link
-        href="#"
+        href="/faq"
         className="relative inline-block after:absolute after:left-0 after:top-full after:h-[1px] after:w-0 after:bg-text dark:after:bg-text-dark after:transition-all after:duration-500 hover:after:w-full"
       >
         FAQ's

@@ -25,7 +25,7 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
   return (
     <div className="flex flex-col gap-2">
 <Dialog open={isCartSelection} onOpenChange={setIsCartSelection}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-background dark:bg-background-dark">
         <DialogHeader>
           <DialogTitle className="sr-only">Select a Variation</DialogTitle>
         </DialogHeader>
@@ -37,7 +37,7 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">Standard product</span>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs bg-primary">
                     {currentProduct?.stock}
                   </Badge>
                 </div>
@@ -55,27 +55,31 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8"
-                  onClick={() => removeFromCart({_id:currentProduct._id, reference_id:''})}
+                  className="h-8 w-8 hover:opacity-80 hover:bg-transparent"
+                  onClick={() => removeFromCart(currentProduct._id,'')}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
                 <span className="px-3">
-                  {cart.find((item:CartItem) => item._id === currentProduct._id)?.quantity || "0"}
+                  {cart.find((item:CartItem) => (!item?.variant && item._id === currentProduct._id))?.quantity || "0"}
                 </span>
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8"
+                  className="h-8 w-8 hover:opacity-80 hover:bg-transparent"
                   onClick={() => addToCart({
-                    _id:currentProduct?._id,title:currentProduct.name,quantity:1,price:currentProduct.discountedPrice,image:currentProduct.images[0].url
+                    _id:currentProduct?._id,
+                    title:currentProduct.name,
+                    quantity:1,
+                    price:currentProduct.discountedPrice,
+                    image:currentProduct.images[0].url
                   })}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
-          {variationsArray.map((variation,idx:number) => (
+          {variationsArray?.map((variation,idx:number) => (
             <div 
               key={idx} 
               className="flex items-center justify-between border rounded-lg p-3"
@@ -83,7 +87,7 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
               <div className="flex flex-col">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold uppercase">{variation?.subVariant}</span>
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge variant="secondary" className="text-xs bg-primary">
                     {variation?.stock}
                   </Badge>
                 </div>
@@ -101,8 +105,8 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8"
-                  onClick={() => updateQuantity(variation?.subVariant, -1)}
+                  className="h-8 w-8 hover:opacity-80 hover:bg-transparent"
+                  onClick={() => removeFromCart(currentProduct._id, variation?._id)}
                 >
                   <Minus className="h-4 w-4" />
                 </Button>
@@ -112,10 +116,11 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-8 w-8"
-                  onClick={() => addToCart({
-                    _id:currentProduct?._id,title:currentProduct.name,quantity:1,price:currentProduct.discountedPrice,image:currentProduct.images[0].url,variation:{reference_id:variation?.reference_id,variantType:variation?.variantType,variant:variation?.subVariant}
-                  })}
+                  className="h-8 w-8 hover:opacity-80 hover:bg-transparent"
+                  onClick={() => {
+                    addToCart({
+                    _id:currentProduct?._id,title:currentProduct.name,quantity:1,price:currentProduct.discountedPrice,image:currentProduct.images[0].url,variant:{reference_id:variation?._id,variantType:variation?.variantType,variant:variation?.subVariant}
+                  })}}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -127,11 +132,12 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
         <div className="flex justify-between mt-4">
           <Button 
             variant="outline" 
+            className='bg-primary text-text-dark hover:bg-primary-dark'
             onClick={() => setIsCartSelection(false)}
           >
             Continue Shopping
           </Button>
-          <Button className='bg-primary text-text-dark'>Go to Cart</Button>
+          <Button className='bg-primary text-text-dark hover:bg-primary-dark'>Go to Cart</Button>
         </div>
       </DialogContent>
     </Dialog>

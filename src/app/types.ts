@@ -31,11 +31,13 @@ interface SubMenuItem {
 
   export interface VariationInterface {
     reference_id?:string; 
+    _id?:string;
     retailPrice: string; 
     discountedPrice: string; 
     variantType: string; 
     subVariant: string, 
-    stock:string
+    stock:string,
+    variations?: IVariation[]
   }
 
   export type GroupedVariant = {
@@ -73,3 +75,18 @@ interface SubMenuItem {
     createdAt: Date;
     updatedAt: Date;
   }
+
+
+ interface IVariation {
+    retailPrice: number;
+    discountedPrice: number;
+    variantType: string;
+    subVariant: string;
+    stock: number;
+  }
+
+  export interface IVariationArray {
+    reference_id: string;
+    variations: IVariation[];
+  }
+
