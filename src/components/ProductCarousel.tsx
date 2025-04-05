@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ImageMagnifier from './ImageMagnifier';
 
 const ProductCarousel = ({ images }:{images:{url:string, id:string}[]}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,11 +29,14 @@ const ProductCarousel = ({ images }:{images:{url:string, id:string}[]}) => {
       <div className='relative'>
       {/* Main image display */}
       <div className="w-full h-[600px] relative">
-        <img
-          src={images[currentIndex]?.url}
-          alt={images[currentIndex]?.id || "Product image"}
-          className="w-full h-full object-cover bg-inherit"
-        />
+         <ImageMagnifier 
+            src={images[currentIndex]?.url}
+            width={600} 
+            height={600} 
+            magnifierSize={250}
+            zoomLevel={2.5}
+            alt={images[currentIndex]?.id || "Product image"}
+          />
       </div>
 
       {/* Navigation arrows for main image */}

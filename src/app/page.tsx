@@ -25,10 +25,12 @@ import {
 import VariationModal from "@/components/VariationModal";
 import Products from "@/components/Product";
 import { CategoryCard, DiscoveryCard } from "@/components/CategoryCards";
+import { useSession } from "next-auth/react";
 
 
 export default function Home() {
-  const {categories, fetchCategories, products, fetchProducts, addToCart, cart, fetchVariations, variations, removeFromCart, setIsCartSelection, drawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct} = useAppContext()
+  const {categories, fetchCategories, products, fetchProducts, addToCart, cart, fetchVariations, variations, removeFromCart, setIsCartSelection, drawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, fetchCart} = useAppContext()
+  const {data:session} = useSession();
 
   const [cleanHtml, setCleanHtml] = useState('');
   
@@ -37,6 +39,7 @@ export default function Home() {
     fetchCategories()
     fetchVariations()
     fetchProducts()
+    fetchCart(session?.user?._id)
   },[])
 
   useEffect(() => {
@@ -212,22 +215,24 @@ export default function Home() {
                   if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
                     setIsCartSelection(true)
                   }else{
-                    addToCart({
-                      _id:currentProduct?._id,
-                      title:currentProduct.name,
-                      quantity:1,
-                      price:currentProduct.discountedPrice,
-                      image:currentProduct.images[0].url
-                    })
+                  addToCart(
+                  {
+                    _id:currentProduct?._id,
+                    title:currentProduct.name,
+                    quantity:1,
+                    price:currentProduct.discountedPrice,
+                    image:currentProduct.images[0].url
                   }
-                  }} className="w-full text-text-dark py-6">
+                  )}
+                }} className="w-full text-text-dark py-6">
                   Add to cart
                 </Button>
               )}
-              
 
               <div className="pt-10">
-                <Link href="/" className="underline">View full details</Link>
+                <Link href="/" className="underline">
+                View full details
+                </Link>
               </div>
             </div>
           </>

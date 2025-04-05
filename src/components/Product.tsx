@@ -1,13 +1,20 @@
+'use client'
+
 import React from 'react'
 import { IProduct, CartItem, VariationInterface, IVariationArray, IVariantArray } from '@/app/types';
+import { Trash } from 'lucide-react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Eye } from "lucide-react";
 import { useAppContext } from '@/context';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useLoading } from '@/context/LoadingContext';
 
-export default function Products({products, variations}: {products: IProduct[], variations: IVariationArray[]}) {
-  const {setDrawerId, setIsDrawerOpen, cart, removeFromCart, addToCart, setIsCartSelection, setCurrentProduct} = useAppContext()
+export default function Products({products, variations, wishlist}: {products: IProduct[], variations: IVariationArray[], wishlist?:boolean}) {
+  const {setDrawerId, setIsDrawerOpen, cart, removeFromCart, addToCart, setIsCartSelection, setCurrentProduct, removeFromWishlist} = useAppContext()
+  const { data: session } = useSession();
+  const {isLoading, setLoading} = useLoading()
   return (
     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2">
         {products?.map((product:IProduct,idx:number) => (
@@ -18,10 +25,27 @@ export default function Products({products, variations}: {products: IProduct[], 
       alt={product.images[0].id} 
       className="w-full h-auto object-cover block hover:scale-110 transition-transform duration-1000 ease-in-out" 
     />
+    {wishlist?
     <button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => {
+      setLoading(true);
+    removeFromWishlist(product._id, session?.user?._id)
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+      }}>
+        <Trash className="w-4 h-4 text-text-dark" />
+      </button>
+    
+    :<button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => {
       setDrawerId(product._id as string)
       setIsDrawerOpen(true)
-      }}><Eye className="w-4 h-4 text-text-dark" /></button>
+      }}>
+        <Eye className="w-4 h-4 text-text-dark" />
+      </button>
+      }
   </div>
   <CardContent className="p-4 flex-grow flex flex-col justify-center space-y-2">
   <Link href={`/product-page/${product._id}`} className="text-sm font-normal line-clamp-2">
@@ -63,13 +87,15 @@ export default function Products({products, variations}: {products: IProduct[], 
                     setCurrentProduct(product)
                     setIsCartSelection(true)
                   }else{
-                    addToCart({
+                    addToCart(
+                    {
                       _id:product?._id,
                       title:product.name,
                       quantity:1,
                       price:product.discountedPrice,
                       image:product.images[0].url
-                    })
+                    }
+                  )
                   }
                   }}>+</button>
                 </div>
@@ -77,7 +103,7 @@ export default function Products({products, variations}: {products: IProduct[], 
                 <Button 
                 onClick={() => {
                   if(variations?.find(
-                    (variation) => variation?.reference_id === product?._id)?.variations?.length){
+                    (variation) => variation?.reference_id == product?._id)?.variations?.length){
                     setCurrentProduct(product)
                     setIsCartSelection(true)
                   }else{
@@ -85,7 +111,7 @@ export default function Products({products, variations}: {products: IProduct[], 
                       _id:product?._id,
                       title:product.name,
                       quantity:1,
-                      price:product.discountedPrice,
+                      price:product.discountedPrice, 
                       image:product.images[0].url
                     })
                   }

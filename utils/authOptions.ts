@@ -47,6 +47,7 @@ export const authOptions:NextAuthOptions = {
       async jwt ({ token, user}:any){
         if (user) {
           token._id = user._id
+          token.email = user.email
           token.roles = user.roles; // Store roles in the JWT token
           
         };
@@ -54,13 +55,14 @@ export const authOptions:NextAuthOptions = {
   
         return token
       },
-      async session ({ session, token, user}:any) {
-        if(token) {
-          session.user._id = token._id
-          session.user.roles = token.roles; // Attach roles to the session
+      async session ({ session, token, user}: any) {
+        if (token) {
+          session.user._id = token._id;
+          session.user.email = token.email;
+          session.user.roles = token.roles;
         }
-        
-        return session
+      
+        return session;
       }
     },
     session: {

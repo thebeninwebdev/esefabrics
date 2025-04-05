@@ -90,3 +90,17 @@ interface SubMenuItem {
     variations: IVariation[];
   }
 
+  export interface Variant {
+    reference_id: string;
+    variantType: string;
+    variant: string;
+  }
+  
+  // Define the Cart interface extending Document
+  export interface ICart extends Document {
+    userId: string;
+    items: CartItem[];
+    totalPrice: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }

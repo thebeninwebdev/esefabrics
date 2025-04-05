@@ -34,6 +34,7 @@ export default function Header() {
             >
               <ThemeSwitch/>
             </div>
+            <Link href="/cart">
             <div
               aria-label="Shopping cart"
               className="bg-white/5 relative p-[.2rem] shadow rounded-full flex-center flex gap-2 cursor-pointer"
@@ -41,6 +42,8 @@ export default function Header() {
               <Badge className="text-text-dark">{cart?.length}</Badge>
             <CiShoppingCart className="w-5 h-5"/>
             </div>
+            </Link>
+            
             <div className="lg:hidden">
               <MobMenu />
             </div>

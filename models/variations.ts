@@ -1,7 +1,7 @@
 
 import {Schema, model, models, Types} from 'mongoose'
 
-const VariantionSchema = new Schema({
+const VariationSchema = new Schema({
     reference_id: {type: Types.ObjectId, ref: "Product", required: true},
     variations: [{
         retailPrice: {type: Number, required: true},
@@ -22,6 +22,6 @@ const VariantionSchema = new Schema({
 {timestamps: true}
 )
 
-const Variation = models.Variantion || model('Variation', VariantionSchema)
+const Variation = models.Variation || model('Variation', VariationSchema)
 
 export default Variation

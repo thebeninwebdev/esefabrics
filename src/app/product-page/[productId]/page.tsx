@@ -7,16 +7,22 @@ import {Heart, Share2, Truck, Ship, Undo2} from "lucide-react"
 import ProductCarousel from '@/components/ProductCarousel'
 import VariationModal from '@/components/VariationModal'
 import SizeChart from '@/components/SizeChart';
-import {toast} from "sonner"
+import {useSession} from "next-auth/react"
 import Link from "next/link"
+import { toast } from 'sonner'
+import { useLoading } from '@/context/LoadingContext'
 
 export default function Page({params}: {params: Promise<{productId: string}>}) {
+  const {data:session} = useSession()
   const resolvedParams = React.use(params)
   const {products, fetchProducts, variations, setIsCartSelection, removeFromCart, addToCart, cart, fetchVariations} = useAppContext()
+  const {isLoading, setLoading} = useLoading();
   const [currentProduct, setCurrentProduct] = useState<IProduct>({} as IProduct)
   const [cleanHtml, setCleanHtml] = useState('');
   const [copied, setCopied] = useState(false);
   const [customText, setCustomText] = useState('Share');
+
+  const userId = session?.user?._id
 
   const copyToClipboard = async () => {
     // Get the full URL (base URL + current path)
@@ -65,6 +71,33 @@ export default function Page({params}: {params: Promise<{productId: string}>}) {
     })();
   }, [currentProduct?.description]);
 
+  const addToWishlist = async (userId: string, productId: string): Promise<{ success: boolean; message: string }> => {
+    try {
+      setLoading(true)
+      const res = await fetch("/api/wishlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId, productId }),
+      });
+  
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(error.message || "Failed to add to wishlist")
+        return { success: false, message: error.message || "Failed to add to wishlist" };
+        
+      }
+      toast.success("Product added to wishlist")
+      return { success: true, message: "Product added to wishlist" };
+    } catch (error) {
+      toast.error("addToWishlist error:" + error)
+      return { success: false, message: "Something went wrong" };
+    }finally{
+      setLoading(false)
+    }
+  };
+
   return (
     <div className='pt-10 max-w-7xl w-full mx-auto'>
                 {currentProduct && (
@@ -79,7 +112,7 @@ export default function Page({params}: {params: Promise<{productId: string}>}) {
               <p className="max-w-2xl w-full text-xl lg:text-3xl">{currentProduct.name}</p>
               <div className="flex items-center gap-5">
                 <span className="text-3xl">
-                  {Number(currentProduct.discountedPrice || 0).toLocaleString("en-NG", {
+                {Number(currentProduct.discountedPrice || 0).toLocaleString("en-NG", {
                     style: "currency",
                     currency: "NGN",
                     minimumFractionDigits: 0,
@@ -165,8 +198,8 @@ export default function Page({params}: {params: Promise<{productId: string}>}) {
                 className="relative overflow-hidden group bg-black dark:bg-primary-dark text-white px-6 py-3 rounded-md flex items-center justify-center font-semibold text-base transition duration-300 w-full">
   <span className="relative z-10">Add to cart</span>
   <div className="absolute inset-0 translate-x-full bg-gradient-to-l from-white/0 via-white/40 to-white/0 group-hover:translate-x-[-200%] transition-transform duration-1000 ease-in-out"></div>
-</button>
-<Heart className="w-10 h-10"/>
+                </button>
+<div onClick={() => addToWishlist(userId as string, currentProduct._id as string)} className='cursor-pointer hover:text-primary transition-all duration-300'><Heart className="w-10 h-10"/></div>
 </div>
               )}
               <div className='flex w-max gap-10'>
@@ -198,7 +231,7 @@ export default function Page({params}: {params: Promise<{productId: string}>}) {
         )}
 {currentProduct?.description && (
                 <div
-                  className="prose dark:prose-invert w-full break-words whitespace-normal text-text dark:text-text-dark h-96 overflow-auto max-w-5xl mx-auto"
+                  className="prose dark:prose-invert w-full break-words whitespace-normal text-text dark:text-text-dark h-96 overflow-auto max-w-4xl mx-auto my-10"
                   style={{
                     backgroundColor: 'transparent',
                     color: 'inherit',

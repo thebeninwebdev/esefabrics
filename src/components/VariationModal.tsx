@@ -5,9 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, Minus } from "lucide-react";
 import { VariationInterface, IProduct, CartItem, Variant } from '@/app/types';
 import { useAppContext } from '@/context';
+import { useSession } from 'next-auth/react';
 
 const VariationModal = ({variationsArray,currentProduct}:{variationsArray:VariationInterface[],currentProduct:IProduct}) => {
   const {isCartSelection, setIsCartSelection, addToCart, removeFromCart, cart} = useAppContext()
+  const {data:session} = useSession()
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({
     M: 0,
     L: 0,
