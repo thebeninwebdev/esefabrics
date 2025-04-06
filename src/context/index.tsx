@@ -117,12 +117,12 @@ export function AppWrapper({children}: {
             }
           } else {
             const targetItem = currentCart.find((i) => i.variant?.reference_id === reference_id);
-            if (targetItem?.quantity === 1 || targetItem?.quantity === 0) {
+            if (targetItem?.variant?.quantity === 1 || targetItem?.variant?.quantity === 0) {
               updatedCart = currentCart.filter((i) => i.variant?.reference_id !== reference_id);
             } else {
               updatedCart = currentCart.map((i) =>
                 i.variant?.reference_id === reference_id
-                  ? { ...i, quantity: i.quantity - 1 }
+                  ? { ...i, variant: { ...i.variant, quantity: i.variant.quantity - 1 } }
                   : i
               );
             }
@@ -169,9 +169,12 @@ export function AppWrapper({children}: {
         let updatedCart:CartItem[] = []
 
         if (reference_id === "") {
-            updatedCart = currentCart.filter((i) => i._id !== productId);
+              updatedCart = currentCart.filter((i) => i._id !== productId || i.variant?.reference_id);
         } else{
-             updatedCart = currentCart.filter((i) => i.variant?.reference_id !== reference_id);
+          
+             updatedCart = currentCart.filter((i) => {
+              console.log(i.variant?.reference_id, reference_id)
+              return i.variant?.reference_id !== reference_id});
         }
 
         // 2. POST the updated cart back to the database
@@ -247,17 +250,23 @@ export function AppWrapper({children}: {
         let updatedItems: CartItem[] = [];
     
         if (item?.variant) {
-          const duplicate = currentItems.find(
-            (i) => i?.variant?.reference_id === item.variant?.reference_id
+          // First check if there's an exact match (same product ID and variant)
+          const existingVariantItem = currentItems.find(
+            (i) => i._id === item._id && i.variant?.reference_id === item.variant?.reference_id
           );
     
-          if (duplicate) {
+          if (existingVariantItem) {
+            // If exact variant match exists, update quantity
             updatedItems = currentItems.map((i) =>
-              i?.variant?.reference_id === item.variant?.reference_id
-                ? { ...i, quantity: i.quantity + item.quantity }
+              i._id === item._id && i.variant?.reference_id === item.variant?.reference_id
+                ? {
+                    ...i,
+                    variant: item.variant
+                  }
                 : i
             );
           } else {
+            // If no exact match, add as new item
             updatedItems = [...currentItems, { ...item }];
           }
         } else {
@@ -266,6 +275,7 @@ export function AppWrapper({children}: {
           );
     
           if (existing) {
+            
             updatedItems = currentItems.map((i) =>
               i._id === item._id && !i?.variant
                 ? { ...i, quantity: i.quantity + item.quantity }

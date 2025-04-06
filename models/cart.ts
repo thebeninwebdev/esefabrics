@@ -6,14 +6,15 @@ import { ICart } from '@/app/types';
 const VariantSchema = new Schema({
   reference_id: { type: String, required: true },
   variantType: { type: String, required: true },
-  variant: { type: String, required: true }
+  variant: { type: String, required: true },
+  quantity: { type: Number, required: true, min: 1 }
 });
 
 // Define the CartItem Schema
 const CartItemSchema = new Schema({
   _id: { type: String, required: true },
   title: { type: String, required: true },
-  quantity: { type: Number, required: true, min: 1 },
+  quantity: { type: Number },
   price: { type: Number, required: true, min: 0 },
   image: { type: String, required: true },
   variant: VariantSchema

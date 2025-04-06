@@ -113,7 +113,7 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
                   <Minus className="h-4 w-4" />
                 </Button>
                 <span className="px-3">
-                  {cart.find((item:CartItem) => (item._id === currentProduct._id && (item?.variant as Variant)?.variant === variation.subVariant))?.quantity || "0"}
+                  {cart.find((item:CartItem) => (item._id === currentProduct._id && item?.variant?.reference_id == variation?._id))?.variant.quantity || "0"}
                 </span>
                 <Button 
                   variant="ghost" 
@@ -121,7 +121,13 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
                   className="h-8 w-8 hover:opacity-80 hover:bg-transparent"
                   onClick={() => {
                     addToCart({
-                    _id:currentProduct?._id,title:currentProduct.name,quantity:1,price:currentProduct.discountedPrice,image:currentProduct.images[0].url,variant:{reference_id:variation?._id,variantType:variation?.variantType,variant:variation?.subVariant}
+                    _id:currentProduct?._id,title:currentProduct.name,price:variation.discountedPrice,image:currentProduct.images[0].url,
+                    variant:{
+                      reference_id:variation?._id,
+                      variantType:variation?.variantType,
+                      variant:variation?.subVariant[0],
+                      quantity: cart.find((item:CartItem) => (item._id === currentProduct._id && item?.variant?.reference_id == variation?._id))?.variant.quantity+1 || 1
+                    }
                   })}}
                 >
                   <Plus className="h-4 w-4" />

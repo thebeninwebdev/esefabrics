@@ -109,7 +109,7 @@ export default function CheckoutInfo() {
                 if(item?.variant){
                   return {
                     productId: item?._id,
-                    quantity: item?.quantity,
+                    quantity: item?.variant?.quantity,
                     variant: item?.variant?.variant
                   }
                 }else{

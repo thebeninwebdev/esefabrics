@@ -1,50 +1,43 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from "react";
-import { HomeSlider } from "@/components/HomeSlider";
-import Marquee from "react-fast-marquee"
-import { TbChristmasTree } from "react-icons/tb";
-import SizeChart from '@/components/SizeChart';
-import { Button } from "@/components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import { useAppContext } from "@/context";
-import Link from "next/link"
-import { IProduct, IImage, CartItem, VariationInterface } from '@/app/types';
-
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle
-} from "@/components/ui/sheet"
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { IProduct, IImage, CartItem } from '../types';
+import Products from '@/components/Product';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
+import { useAppContext } from '@/context';
 import VariationModal from "@/components/VariationModal";
-import Products from "@/components/Product";
-import { CategoryCard, DiscoveryCard } from "@/components/CategoryCards";
-import { useSession } from "next-auth/react";
+import { VariationInterface } from '@/app/types';
+import SizeChart from '@/components/SizeChart';
+import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import Link from 'next/link';
 
-
-export default function Home() {
-  const {categories, fetchCategories, products, fetchProducts, addToCart, cart, fetchVariations, variations, removeFromCart, setIsCartSelection, drawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, fetchCart} = useAppContext()
-  const {data:session} = useSession();
-
+export default function SearchPage() {
+    const {variations, currentProduct, setCurrentProduct, drawerId, isDrawerOpen, setIsDrawerOpen, setIsCartSelection, cart, removeFromCart, addToCart, fetchVariations} = useAppContext()
+  const [searchQuery, setSearchQuery] = useState('');
+  const [products, setProducts] = useState<IProduct[]>([]);
+  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
   const [cleanHtml, setCleanHtml] = useState('');
-  
-  
+  const router = useRouter();
+
   useEffect(() => {
-    fetchCategories()
+    const query = searchParams.get('q');
+    if (query) {
+      setSearchQuery(query);
+      handleSearch(query);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     fetchVariations()
-    fetchProducts()
-    fetchCart(session?.user?._id)
   },[])
 
   useEffect(() => {
 
-    if(drawerId) setCurrentProduct(products.find((product:IProduct) => product._id === drawerId))
+    if(drawerId) setCurrentProduct(products.find((product:IProduct) => product?._id === drawerId))
   },[drawerId])
 
   useEffect(() => {
@@ -67,51 +60,48 @@ export default function Home() {
     })();
   }, [currentProduct?.description]);
 
+  const handleSearch = async (query: string) => {
+    if (!query.trim()) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error('Search failed');
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+  };
+
   return (
-    <main className="text-text dark:text-text-dark w-full">
-      <div className="p-3 sm:p-5">
-      <HomeSlider/>
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-2xl mx-auto mb-8">
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Search products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1"
+          />
+          <Button type="submit">
+            <Search className="w-4 h-4 mr-2" />
+            Search
+          </Button>
+        </form>
       </div>
-      
-    <Marquee pauseOnHover className="py-6 bg-complement dark:bg-complement-dark text-2xl text-text-dark cursor-pointer ">
-      <div className="flex gap-5">
-      <div className="flex items-center"><TbChristmasTree/>&nbsp;Christmas Sale: Save Up to 70%&nbsp;<TbChristmasTree/></div>
-      <div className="flex items-center"><TbChristmasTree/>&nbsp;Christmas Sale: Save Up to 70%&nbsp;<TbChristmasTree/></div>
-      <div className="flex items-center"><TbChristmasTree/>&nbsp;Christmas Sale: Save Up to 70%&nbsp;<TbChristmasTree/></div>
-      </div>
-    </Marquee>
-    <div className="w-full p-4 ">
-      <div className="lg:flex">
-        <Carousel className="w-full">
-          <div className="flex items-center justify-between my-6">
-            <h2 className="text-xl sm:text-2xl font-bold uppercase">Shop by Categories</h2>
-            <div className="flex w-10 relative">
-              <CarouselPrevious className=" h-8 w-8 dark:bg-background-dark" />
-              <CarouselNext className="right-0 h-8 w-8 dark:bg-background-dark" />
-            </div>
-          </div>
-        <div className="flex flex-col lg:flex-row gap-5">
-        <CarouselContent className="-ml-4">
-          {categories?.length && categories?.map((category:any) => (
-            <CarouselItem key={category?._id} className="pl-4 md:basis-1/3">
-              <CategoryCard 
-                title={category?.category} 
-                image={category?.link} 
-              />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-<DiscoveryCard />
-        </div>
-      </Carousel>
-    </div>
-  </div>
-  <div className=" mx-auto px-2 py-16 space-y-20">
-      <h1 className="text-4xl font-bold text-center mb-6">Today's Top Picks</h1>
-      <Products products={products} variations={variations} />
-    </div>
-    <VariationModal variationsArray={variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations} currentProduct={currentProduct} />
-    <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+      {variations.length > 0 && <VariationModal variationsArray={variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations || []} currentProduct={currentProduct} />}
+      <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
     <SheetTitle className="sr-only">Quick view</SheetTitle>
       <SheetContent className="space-y-5 p-0 bg-background dark:bg-background-dark overflow-y-auto text-text dark:text-text-dark">
         {currentProduct && (
@@ -184,7 +174,7 @@ export default function Home() {
                 
               }
               
-              {cart.find((item:CartItem) => item._id === currentProduct._id) ? (
+              {cart.find((item:CartItem) => item?._id === currentProduct?._id) ? (
                 <div className="flex justify-between w-36 py-2 px-4 h-max text-2xl font-thin items-center text-text bg-neutral-300 rounded-md ">
                   <button onClick={() => {
                     if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
@@ -194,7 +184,7 @@ export default function Home() {
                     }} className="">-</button>
                   <span className="text-lg font-normal">
   {cart
-  .filter((item: CartItem) => item._id === currentProduct._id)
+  .filter((item: CartItem) => item?._id === currentProduct?._id)
   .reduce((sum:number, item:CartItem) => sum + (item.quantity || 0) + (item?.variant?.quantity || 0), 0)}
   </span>
                   <button onClick={() => {
@@ -241,6 +231,16 @@ export default function Home() {
         )}
       </SheetContent>
     </Sheet>
-    </main>
+      {loading ? (
+        <div className="text-center">Loading...</div>
+      ) : products?.length > 0 && variations.length > 0 ? 
+      <Products products={products} variations={variations} />
+      :
+    searchQuery ? (
+        <div className="text-center text-gray-500">
+          No products found matching "{searchQuery}" or you havent clicked the search button
+        </div>
+      ) : null}
+    </div>
   );
-}
+} 

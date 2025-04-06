@@ -79,9 +79,11 @@ export default function Products({products, variations, wishlist}: {products: IP
                     }else{
                       removeFromCart(product._id,'')}
                     }} className="">-</button>
-                  <span className="text-lg font-normal">{cart
+                  <span className="text-lg font-normal">
+                    {cart
   .filter((item: CartItem) => item._id === product._id)
-  .reduce((sum:number, item:CartItem) => sum + item.quantity, 0)}</span>
+  .reduce((sum:number, item:CartItem) => sum + (item.quantity || 0) + (item?.variant?.quantity || 0), 0)}
+  </span>
                   <button onClick={() => {
                   if(variations?.find((variation) => variation?.reference_id === product?._id)?.variations?.length){
                     setCurrentProduct(product)

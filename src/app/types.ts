@@ -23,12 +23,6 @@ interface SubMenuItem {
     variant?: Variant;
   };
 
-  export interface Variant{
-    reference_id: string;
-    variantType: string;
-    variant: string;
-  }
-
   export interface VariationInterface {
     reference_id?:string; 
     _id?:string;
@@ -94,6 +88,7 @@ interface SubMenuItem {
     reference_id: string;
     variantType: string;
     variant: string;
+    quantity: number
   }
   
   // Define the Cart interface extending Document

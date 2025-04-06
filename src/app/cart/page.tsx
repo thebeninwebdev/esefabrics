@@ -55,7 +55,7 @@ export default function CartPage() {
   const displayPrice = priceChanged ? productCheck?.price : item.price;
 
             return(
-              <div key={item?._id}>
+              <div key={item?.variant?.reference_id || item?._id}>
 <div className="mb-6">
               {/* Desktop view */}
               <div className="hidden md:grid grid-cols-12 gap-4 border-b py-6 items-center">
@@ -112,9 +112,11 @@ export default function CartPage() {
                         }else{
                           removeFromCart(item?._id,'')}
                         }} className="">-</button>
-                      <span className="text-lg font-normal">{cart
-                        .filter((cartItem: CartItem) => cartItem?._id === item?._id)
-                        .reduce((sum:number, cartItem:CartItem) => sum + cartItem.quantity, 0)}</span>
+                      <span className="text-lg font-normal">
+                        {cart
+                        .filter((cartItem: CartItem) => cartItem._id === item._id)
+                        .reduce((sum:number, cartItem:CartItem) => sum + (cartItem?.quantity || 0) + (cartItem?.variant?.quantity || 0), 0)}
+                        </span>
                       <button 
                         onClick={() => {
                           if(variations?.find((variation:VariationInterface) => variation?.reference_id === item?._id)?.variations?.length > 0){
@@ -177,9 +179,11 @@ export default function CartPage() {
                         }else{
                           removeFromCart(item?._id,'')}
                         }} className="">-</button>
-                      <span className="text-base font-normal">{cart
-                        .filter((cartItem: CartItem) => cartItem?._id === item?._id)
-                        .reduce((sum:number, cartItem:CartItem) => sum + cartItem.quantity, 0)}</span>
+                      <span className="text-base font-normal">
+                        {
+                        item?.variant ? item?.variant?.quantity:
+                        item?.quantity}
+                      </span>
                       <button 
                         onClick={() => {
                           if(variations?.find((variation:VariationInterface) => variation?.reference_id === item?._id)?.variations?.length > 0){
@@ -198,7 +202,7 @@ export default function CartPage() {
                     </div>
                   </div>
                   <div className="font-medium">
-                    Total: {Number(item?.price * item?.quantity).toLocaleString("en-NG", {
+                    Total: {Number((item?.price || 0) * ((item?.quantity || 0) + (item?.variant?.quantity || 0))).toLocaleString("en-NG", {
                       style: "currency",
                       currency: "NGN",
                       minimumFractionDigits: 0,
@@ -208,7 +212,7 @@ export default function CartPage() {
 
                 <div className="mt-3">
                   <button 
-                    onClick={() => clearFromCart(item?._id,item?.variant ? item?.variant.variant : "")}
+                    onClick={() => clearFromCart(item?._id,item?.variant ? item?.variant.reference_id : "")}
                     className="text-gray-500 text-sm underline hover:text-black"
                   >
                     Remove
@@ -216,13 +220,14 @@ export default function CartPage() {
                 </div>
               </div>
             </div>
-            <div className='w-full flex justify-center'>
-            <Link className='bg-primary text-text-dark px-10 rounded-md py-2 hover:opacity-90 flex gap-1 hover:scale-105 transition-transform duration-300 ease-in-out' href="/checkout" >Checkout<ShoppingCartIcon/></Link>
-            </div>
+            
             
               </div>
             )
 })}
+<div className='w-full flex justify-center'>
+            <Link className='bg-primary text-text-dark px-10 rounded-md py-2 hover:opacity-90 flex gap-1 hover:scale-105 transition-transform duration-300 ease-in-out' href="/checkout" >Checkout<ShoppingCartIcon/></Link>
+            </div>
         </>
       ) : (
         <div className="text-center py-12">

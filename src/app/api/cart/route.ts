@@ -31,10 +31,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
     }
 
-    const totalPrice = items.reduce((acc: number, item: any) => {
-      return acc + item.price * item.quantity;
-    }, 0);
-
     const updatedCart = await Cart.findOneAndUpdate(
       { userId },
       { items },
@@ -43,6 +39,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(updatedCart);
   } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: 'Failed to update cart' }, { status: 500 });
   }
 }
