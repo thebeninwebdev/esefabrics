@@ -57,7 +57,10 @@ export default function RootLayout({
   zIndex={1600}
   showAtBottom={false}
 />
-                <div className="text-text dark:text-text-dark w-full h-full text bg-background dark:bg-background-dark pt-[63.99px]">
+                <div className="text-text dark:text-text-dark w-full h-full text bg-background dark:bg-background-dark">
+                  <Wrapper path="/admin">
+                  <div className="pt-[63.99px]"></div>
+                  </Wrapper>
                   {children}
                   <Wrapper path="/admin">
                     <ClothingCTA />

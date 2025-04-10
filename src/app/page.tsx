@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { HomeSlider } from "@/components/HomeSlider";
 import Marquee from "react-fast-marquee"
 import { TbChristmasTree } from "react-icons/tb";
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import SizeChart from '@/components/SizeChart';
 import { Button } from "@/components/ui/button";
 import {
@@ -13,34 +14,71 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel"
+import { Eye } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
 import Link from "next/link"
-import { IProduct, IImage, CartItem, VariationInterface } from '@/app/types';
-
+import { IProduct, IImage, GroupedVariant, CartItem } from '@/app/types';
 import {
   Sheet,
   SheetContent,
   SheetTitle
 } from "@/components/ui/sheet"
-import VariationModal from "@/components/VariationModal";
-import Products from "@/components/Product";
-import { CategoryCard, DiscoveryCard } from "@/components/CategoryCards";
-import { useSession } from "next-auth/react";
+import { groupVariants } from "@/lib/utils";
+import { Variant } from "@/components/Variant";
 
+const CategoryCard = ({ title, image }:{
+  title:string, image:string}) => {
+  return (
+    <Card className={`w-full h-full bg-background dark:bg-background-dark overflow-hidden border-none rounded-lg`}>
+      <CardContent className="p-0 relative">
+            <img 
+              src={image}
+              alt={title} 
+              className="w-full h-full object-contain block hover:scale-110 transition-transform duration-1000 ease-in-out"
+            />
+          <div className="px-6 py-2 rounded-r-md bg-background dark:bg-background-dark absolute z-10 bottom-6 left-0">
+            <h3 className="text-lg">{title}</h3>
+          </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+const DiscoveryCard = () => {
+  return (
+    <div className="w-full overflow-hidden border border-neutral-900 rounded-lg dark:border-neutral-200 lg:max-w-72">
+      <div className="p-4 flex justify-between items-center w-full lg:flex-col gap-10">
+        <h2 className="text-xl lg:text-3xl">Discovery all new items</h2>
+        <Link href="/categories">
+        <div className="p-2 rounded-full border border-neutral-900 flex items-center justify-center -rotate-45 hover:bg-neutral-900 hover:text-text-dark cursor-pointer ease-in-out duration-500 transition-colors dark:border-neutral-200 dark:hover:bg-background hover:dark:text-text">
+          <ArrowRight className="h-4 w-4" />
+        </div>
+        </Link>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
-  const {categories, fetchCategories, products, fetchProducts, addToCart, cart, fetchVariations, variations, removeFromCart, setIsCartSelection, drawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, fetchCart} = useAppContext()
-  const {data:session} = useSession();
-
+  const {categories, fetchCategories, products, fetchProducts, addToCart, removeFromCart, updateQuantity, cart, variants, setVariants,} = useAppContext()
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [drawerId, setDrawerId] = useState("")
   const [cleanHtml, setCleanHtml] = useState('');
+  const [groupedArray, setGroupedArray] = useState<GroupedVariant[]>([] as GroupedVariant[])
+  const [currentProduct, setCurrentProduct] = useState<IProduct>({} as IProduct);
   
-  
+
   useEffect(() => {
     fetchCategories()
-    fetchVariations()
     fetchProducts()
-    fetchCart(session?.user?._id)
   },[])
+
+  useEffect(() => {
+    if(currentProduct?.description){
+      setGroupedArray(groupVariants(currentProduct?.variantArray) )
+    }
+  },[currentProduct])
 
   useEffect(() => {
 
@@ -108,137 +146,125 @@ export default function Home() {
   </div>
   <div className=" mx-auto px-2 py-16 space-y-20">
       <h1 className="text-4xl font-bold text-center mb-6">Today's Top Picks</h1>
-      <Products products={products} variations={variations} />
+      
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2">
+        {products?.map((product:IProduct,idx:number) => (
+          <Card key={idx} className="overflow-hidden border-0 rounded-md flex flex-col h-full">
+  <div className="relative">
+    <img 
+      src={product.images[0].url}
+      alt={product.images[0].id} 
+      className="w-full h-auto object-cover block hover:scale-110 transition-transform duration-1000 ease-in-out" 
+    />
+    <button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => {
+      setDrawerId(product._id as string)
+      setIsDrawerOpen(true)
+      }}><Eye className="w-4 h-4" /></button>
+  </div>
+  <CardContent className="p-4 flex-grow flex flex-col justify-center space-y-2">
+  <h3 className="text-sm font-normal line-clamp-2">
+  {product.name}
+</h3>
+    <div className="flex items-center gap-5">
+    <span className="font-semibold">
+        {Number(product.discountedPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      <span className="text-gray-400 line-through text-sm">
+        {Number(product.retailPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      
     </div>
-    <VariationModal variationsArray={variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations} currentProduct={currentProduct} />
-    <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-    <SheetTitle className="sr-only">Quick view</SheetTitle>
-      <SheetContent className="space-y-5 p-0 bg-background dark:bg-background-dark overflow-y-auto text-text dark:text-text-dark">
-        {currentProduct && (
-          <>
-            <div className="overflow-auto pt-8 w-full">
-              <div className="flex w-max gap-3">
-                {currentProduct.images?.map((image:IImage,index:number) => (
-                  <div key={index} className="w-36 h-44 block bg-red-500 mt-8">
-                    <img
-                      src={image.url}
-                      alt={image.id}
-                      className="bg-gray-100 object-cover relative w-full h-full"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="px-3 space-y-4">
-              <p className="max-w-sm">{currentProduct.name}</p>
-              <div className="flex items-center gap-5">
-                <span className="font-semibold text-md">
-                  {Number(currentProduct.discountedPrice || 0).toLocaleString("en-NG", {
-                    style: "currency",
-                    currency: "NGN",
-                    minimumFractionDigits: 0,
-                  })}
-                </span>
-                <span className="text-gray-400 line-through text-sm text-md">
-                  {Number(currentProduct.retailPrice || 0).toLocaleString("en-NG", {
-                    style: "currency",
-                    currency: "NGN",
-                    minimumFractionDigits: 0,
-                  })}
-                </span>
-                <span className="text-xs bg-primary dark:bg-primary-dark text-text-dark px-1 rounded-lg">
-                  -{Math.round(((currentProduct.retailPrice - currentProduct.discountedPrice) / currentProduct.retailPrice) * 100)}%
-                </span>
-              </div>
-              {currentProduct.description && (
-                <div
-                  className="prose dark:prose-invert max-w-none w-full break-words whitespace-normal text-text dark:text-text-dark h-72 overflow-auto"
-                  style={{
-                    backgroundColor: 'transparent',
-                    color: 'inherit',
-                  }}
-                  dangerouslySetInnerHTML={{ __html: cleanHtml }}
-                />
-              )}
-            </div>
-            <div className="py-5 px-3 space-y-5">
-            {
-                variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id) &&
-<div className="">
-                <div className="flex justify-between">
-                  <div className="flex w-full">
-                    <div className="flex justify-between w-full">
-                      <p>Variations Available:</p>
-                      <SizeChart />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2 pt-3">
-                {variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.map((variation:any,idx:number) => (
-                  <div key={idx} onClick={() => setIsCartSelection(true)} className="py-1 px-3 rounded-md border-primary border-2 dark:bg-primary-dark dark:text-text-dark text-text w-max">
-                    {variation?.subVariant}
-                  </div>
-                ))}
-                </div>
-              </div>
-                
-              }
-              
-              {cart.find((item:CartItem) => item._id === currentProduct._id) ? (
-                <div className="flex justify-between w-36 py-2 px-4 h-max text-2xl font-thin items-center text-text bg-neutral-300 rounded-md ">
-                  <button onClick={() => {
-                    if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
-                      setIsCartSelection(true)
-                    }else{
-                      removeFromCart(currentProduct._id,'')}
-                    }} className="">-</button>
-                  <span className="text-lg font-normal">
-  {cart
-  .filter((item: CartItem) => item._id === currentProduct._id)
-  .reduce((sum:number, item:CartItem) => sum + (item.quantity || 0) + (item?.variant?.quantity || 0), 0)}
-  </span>
-                  <button onClick={() => {
-                  if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
-                    setIsCartSelection(true)
-                  }else{
-                    addToCart({
-                      _id:currentProduct?._id,
-                      title:currentProduct.name,
-                      quantity:1,
-                      price:currentProduct.discountedPrice,
-                      image:currentProduct.images[0].url
-                    })
-                  }
-                  }}>+</button>
-                </div>
-              ) : (
-                <Button 
-                onClick={() => {
-                  if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
-                    setIsCartSelection(true)
-                  }else{
-                  addToCart(
-                  {
-                    _id:currentProduct?._id,
-                    title:currentProduct.name,
-                    quantity:1,
-                    price:currentProduct.discountedPrice,
-                    image:currentProduct.images[0].url
-                  }
-                  )}
-                }} className="w-full text-text-dark py-6">
-                  Add to cart
-                </Button>
-              )}
+  </CardContent>
+  <CardFooter className="pt-0 px-4 mt-auto">
+    <Button className="w-full text-text-dark dark:text-text">Add to cart</Button>
+  </CardFooter>
+</Card>
 
-              <div className="pt-10">
-                <Link href="/" className="underline">
-                View full details
-                </Link>
-              </div>
-            </div>
-          </>
-        )}
+        ))}
+      </div>
+    </div>
+    <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+    <SheetTitle>Quick view</SheetTitle>
+      <SheetContent className="space-y-5 p-0 bg-background dark:bg-background-dark overflow-y-auto text-text dark:text-text-dark">
+        <div className="overflow-auto pt-8 w-full">
+        <div className="flex w-max gap-3">
+        {drawerId && currentProduct?.images?.map((image:IImage,index:number) => (
+          <div key={index} className="w-36 h-44 block bg-red-500 mt-8">
+          <img
+            src={image.url}
+            alt={image.id}
+            className="bg-gray-100 object-cover relative w-full h-full"
+          />
+        </div>
+        ))}
+        </div>
+        </div>
+        <div className="px-3 space-y-4">
+        <p className="max-w-sm">{currentProduct?.name}</p>
+        <div className="flex items-center gap-5">
+    <span className="font-semibold text-md">
+        {Number(currentProduct.discountedPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      <span className="text-gray-400 line-through text-sm text-md">
+        {Number(currentProduct.retailPrice).toLocaleString("en-NG", {
+          style: "currency",
+          currency: "NGN",
+          minimumFractionDigits: 0,
+        })}
+      </span>
+      <span className="text-xs bg-primary dark:bg-primary-dark text-text-dark px-1 rounded-lg">-{Math.round(((currentProduct?.retailPrice - currentProduct?.discountedPrice) / currentProduct?.retailPrice) * 100)}%
+      </span>
+
+    </div>
+    {currentProduct?.description && (
+  <div
+  className="prose dark:prose-invert max-w-none w-full break-words whitespace-normal text-text dark:text-text-dark h-72 overflow-auto"
+  style={{
+    backgroundColor: 'transparent',
+    color: 'inherit',
+  }}
+    dangerouslySetInnerHTML={{ __html: cleanHtml }}
+  />
+)}</div>
+<div className="py-5 px-3 space-y-5">
+ {groupedArray?.map((group,idx:number) => (
+  <div className="" key={idx}>
+    <div className="flex justify-between">
+      <div className="flex w-max gap-4">
+    <p>{group?.variantType[0].toUpperCase()+group?.variantType.slice(1)}:</p>
+    {
+    <p className="">{variants.find((variant:any) => variant.variantType === group?.variantType)?.variant.toUpperCase()}</p>}
+    </div>
+    {group?.variantType === "size" && <SizeChart />}
+    </div>
+    <Variant subVariants={group?.variants} variantType={group?.variantType}/>
+  </div>
+ ))}
+ {cart.find((item:CartItem) => item._id === currentProduct._id) ?<div className="flex justify-between w-36 py-2 px-4 h-max text-2xl font-thin items-center text-text bg-neutral-300 rounded-md">
+   <button onClick={() => updateQuantity(currentProduct._id,1)} className="">-</button>
+   <span className="text-lg font-normal">{cart.find((item:CartItem) => item._id === currentProduct._id).quantity}</span>
+   <button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})}>+</button>
+ </div>
+ :<Button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})} className="w-full text-text-dark py-6">Add to cart</Button>
+ }
+
+ <div className="pt-10">
+ <Link href="/" className="underline">View full details</Link>
+ </div>
+ 
+</div>
       </SheetContent>
     </Sheet>
     </main>

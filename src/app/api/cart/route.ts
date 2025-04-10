@@ -21,10 +21,12 @@ export async function GET(req: NextRequest) {
 
 // POST: Create or update a user's cart
 export async function POST(req: NextRequest) {
+  
   await connectMongoDB();
 
   try {
     const body = await req.json();
+
     const { userId, items } = body;
 
     if (!userId || !Array.isArray(items)) {

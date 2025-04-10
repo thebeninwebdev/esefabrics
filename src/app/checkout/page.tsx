@@ -22,6 +22,7 @@ export default function CheckoutInfo() {
     lastName: '',
     phoneNumber: '',
     address: '',
+    orderNote: '',
   });
 
   // Validation state
@@ -39,13 +40,23 @@ export default function CheckoutInfo() {
   useEffect(() => {
     setSubTotal(
         cart
-        .map((item:CartItem) => item.price * item.quantity)
+        .map((item:CartItem) => item.price * (
+          item?.variant
+          ?
+          item?.variant?.quantity
+          :
+          item?.quantity
+        ))
     .reduce((partialSum: number, a: number) => partialSum + a, 0))
   },[cart])
 
    // Check form validity whenever formData changes
    useEffect(() => {
-    const formHasEmptyFields = Object.values(formData).some(value => value.trim() === '');
+    const { firstName, lastName, phoneNumber, address } = formData;
+    const formHasEmptyFields = 
+      !firstName.trim() || 
+      !lastName.trim() || !phoneNumber.trim() || !address.trim();
+    
     setIsFormValid(!formHasEmptyFields);
   }, [formData]);
 
@@ -83,7 +94,6 @@ export default function CheckoutInfo() {
   // Validate form and handle submission
   const handleSubmit = (e:FormEvent) => {
     e.preventDefault();
-    console.log("working",session)
     // Check for empty fields
     const newErrors = {
       firstName: formData.firstName.trim() === '',
@@ -94,14 +104,14 @@ export default function CheckoutInfo() {
     
     setErrors(newErrors);
 
-    const handlePayment = async (firstName:string,lastName:string, address:string) => {
+    const handlePayment = async (firstName:string,lastName:string, address:string, orderNote:string) => {
       try {
         const PaystackPop = (await import('@paystack/inline-js')).default;
         const paystack = new PaystackPop();
         paystack.newTransaction({
           key: "pk_test_f251ecc6c7abf64964bd76612536a98b43a56b2f",
           amount: (subTotal+delivery) * 100,
-          email: session?.user?.email as string,
+          email: session?.user?.email|| "",
           onSuccess(transaction) {
             createOrder({
               userId: session?.user?._id,
@@ -114,19 +124,46 @@ export default function CheckoutInfo() {
                   }
                 }else{
                   return {
+
                     productId: item?._id,
                     quantity: item?.quantity,
                   }
                 }
               }),
               totalAmount: subTotal,
-              shippingAddress: {fullName:firstName+" "+lastName, address}
+              shippingAddress: {fullName:firstName+" "+lastName, address},
+              orderNote: orderNote,
+              status: 'paid'
             })
+
             const message = `Transaction complete! Reference: ${transaction.reference}`;
             clearCart()
             toast.success(message);
           },
+
           onCancel: () => {
+            createOrder({
+              userId: session?.user?._id,
+              products:cart.map((item:CartItem) => {
+                if(item?.variant){
+                  return {
+                    productId: item?._id,
+                    quantity: item?.variant?.quantity,
+                    variant: item?.variant?.variant
+                  }
+                }else{
+                  return {
+
+                    productId: item?._id,
+                    quantity: item?.quantity,
+                  }
+                }
+              }),
+              totalAmount: subTotal,
+              shippingAddress: {fullName:firstName+" "+lastName, address},
+              orderNote: formData.orderNote,
+              status: 'cancelled'
+            })
             toast.error("Your transaction has been cancelled");
           },
         });
@@ -138,7 +175,7 @@ export default function CheckoutInfo() {
     
     // If form is valid, save to state and proceed
     if (!Object.values(newErrors).includes(true)) {
-      handlePayment(formData.firstName.trim(),formData.lastName.trim(),formData.address.trim())
+      handlePayment(formData.firstName.trim(),formData.lastName.trim(),formData.address.trim(), formData.orderNote.trim())
     }
   };
 
@@ -212,7 +249,19 @@ export default function CheckoutInfo() {
               <p className="text-red-500 text-sm mt-1">Phone number is required</p>
             )}
           </div>
-          
+          <div className="mb-4">
+  <label htmlFor="orderNote" className="block mb-1">Order Note (Optional)</label>
+  <textarea
+    id="orderNote"
+    name="orderNote"
+    value={formData.orderNote}
+    className="w-full p-3 border rounded-md border-gray-300"
+    onChange={handleChange}
+    placeholder="Leave a note about your order (optional)..."
+    rows={4}
+  />
+</div>
+
           <div className="mb-6">
             <label className="block mb-1" htmlFor="address">
               Delivery Address in Benin City <span className="text-red-500">*</span>

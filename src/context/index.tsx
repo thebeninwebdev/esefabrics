@@ -38,8 +38,10 @@ export function AppWrapper({children}: {
     const [drawerId, setDrawerId] = useState("")
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+    const [visitors, setVisitors] = useState([])
     const [currentProduct, setCurrentProduct] = useState<IProduct>({} as IProduct);
     const [wishlistDisplay, setWishlistDisplay] = useState([])
+    const [allOrders, setAllOrders] = useState([])
 
     useEffect(() => {
       if(session?.user?._id){
@@ -49,6 +51,7 @@ export function AppWrapper({children}: {
 
     useEffect(() => {
       fetchProducts()
+      fetchVisitor()
     },[])
  
     async function createOrder(orderData: {
@@ -79,7 +82,6 @@ export function AppWrapper({children}: {
       }
     }
     
-    
 
     const addVariant = (item:Variant) => {
       if (!item) return;
@@ -107,26 +109,35 @@ export function AppWrapper({children}: {
         let updatedCart:CartItem[] = []
 
           if (reference_id === "") {
-            const targetItem = currentCart.find((i) => i._id === productId);
+
+            const targetItem = currentCart.find((i) => i._id === productId && i.variant?.reference_id !== reference_id);
+
             if (targetItem?.quantity === 1) {
-              updatedCart = currentCart.filter((i) => i._id !== productId);
+              updatedCart = currentCart.filter((i) => {
+                if (i._id !== productId) return true;  // Keep others
+                if (i.variant) return true;                  // Keep if it has variant
+                return false;                                       // Remove if same ID and no variant
+              });
             } else {
-              updatedCart = currentCart.map((i) =>
+
+              updatedCart = currentCart.map(
+                (i) =>
                 i._id === productId ? { ...i, quantity: i.quantity - 1 } : i
               );
             }
+
           } else {
+
             const targetItem = currentCart.find((i) => i.variant?.reference_id === reference_id);
-            if (targetItem?.variant?.quantity === 1 || targetItem?.variant?.quantity === 0) {
+            if (targetItem?.variant?.quantity === 1 || targetItem?.variant?.quantity === 0)
+            {
               updatedCart = currentCart.filter((i) => i.variant?.reference_id !== reference_id);
             } else {
               updatedCart = currentCart.map((i) =>
                 i.variant?.reference_id === reference_id
                   ? { ...i, variant: { ...i.variant, quantity: i.variant.quantity - 1 } }
-                  : i
-              );
-            }
-          }
+                  : i);
+            }}
 
           setCart(updatedCart)
     
@@ -143,15 +154,17 @@ export function AppWrapper({children}: {
         if (!postRes.ok) {
           toast.error('Failed to update cart');
         }
+
         if (session?.user?._id) {
           fetchCart(session.user._id);
         }
+
         toast.success('Item removed from cart');
 
       } catch (error) {
         console.error('Failed to remove from cart:', error);
         toast.error("failed to remove item from cart")
-        // (optional) You could roll back the cart update here if you want
+        
       } finally {
         setLoading(false)
       }
@@ -340,6 +353,73 @@ export function AppWrapper({children}: {
       }
     };
 
+    const fetchAllOrders = async () => {
+  
+      try {
+        const res = await fetch(`/api/orders/all`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+    
+        if (!res.ok) {
+          toast.error('Failed to fetch orders');
+        }
+
+        const data = await res.json();
+        
+        setAllOrders(data);
+
+        return data;
+
+      } catch (error) {
+        toast.error("fetchCart error");
+        console.log('fetchCart error:', error);
+        return null;
+      }
+    };
+
+    const fetchAllVisitors = async () => {
+  
+      try {
+        const res = await fetch(`/api/visitors/all`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+    
+        if (!res.ok) {
+          toast.error('Failed to fetch visitors');
+        }
+
+        const data = await res.json();
+        
+        setVisitors(data);
+
+        return data;
+
+      } catch (error) {
+        toast.error("fetchCart error");
+        console.log('fetchCart error:', error);
+        return null;
+      }
+    };
+
+    async function fetchVisitor() {
+      try {
+        await fetch("/api/visitors", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }); 
+      } catch (err: any) {
+        console.log("Unknown error");
+      }
+    }
+
     const fetchWishlist = useCallback(async (userId:string) => {
         try {
             const res = await fetch(`/api/wishlist?userId=${userId}`);
@@ -446,7 +526,7 @@ export function AppWrapper({children}: {
     }
 
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations, isCartSelection, setIsCartSelection, drawerId, setDrawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, clearFromCart, fetchWishlist, removeFromWishlist, wishlistDisplay, fetchCart, delivery, createOrder}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations, isCartSelection, setIsCartSelection, drawerId, setDrawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, clearFromCart, fetchWishlist, removeFromWishlist, wishlistDisplay, fetchCart, delivery, createOrder, fetchAllOrders, allOrders, setAllOrders, fetchAllVisitors, visitors}}>
             { children }
         </AppContext.Provider>
     )

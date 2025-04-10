@@ -13,6 +13,7 @@ export interface IOrder extends Document {
     fullName: string;
     address: string;
   };
+  orderNote: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +54,7 @@ const OrderSchema = new Schema<IOrder>(
       fullName: { type: String, required: true },
       address: { type: String, required: true },
     },
+    orderNote: String,
   },
   { timestamps: true }
 );

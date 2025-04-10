@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     await connectMongoDB();
 
-    const { products, totalAmount, shippingAddress } = await req.json();
+    const { products, totalAmount, shippingAddress, orderNote, status} = await req.json();
 
     if (!products || products.length === 0) {
       return NextResponse.json({ message: "No products provided" }, { status: 400 });
@@ -71,13 +71,45 @@ export async function POST(req: Request) {
       products,
       totalAmount,
       shippingAddress,
-      status: "paid",
+      status,
+      orderNote
     });
 
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
     console.error("[ORDER_POST]", error);
     return NextResponse.json({ message: "Failed to create order" }, { status: 500 });
+  }
+}
+
+// POST - Create a New Order
+export async function PATCH(req: Request) {
+  try {
+
+    await connectMongoDB();
+
+    const { order } = await req.json();
+
+    if (!order) {
+      return NextResponse.json({ message: "no order found" }, { status: 400 });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(order._id, order, {new: true})
+
+    if(!updatedOrder){
+      return NextResponse.json(
+          {message: 'Order not found'},
+          {status: 404}
+      )
+  }
+
+  return NextResponse.json(
+      {message: 'Order updated successfully', order: updatedOrder},
+      {status: 200}
+  )
+  } catch (error) {
+    console.error("[ORDER_POST]", error);
+    return NextResponse.json({ message: "Failed to update order" }, { status: 500 });
   }
 }
 
