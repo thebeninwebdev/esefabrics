@@ -2,9 +2,25 @@
 
 import { useMemo } from "react"
 import { TrendingUp, TrendingDown } from "lucide-react"
-import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tooltip } from "recharts"
+import { Bar, BarChart, XAxis, YAxis, ResponsiveContainer, CartesianGrid, Tooltip, TooltipProps } from "recharts"
 import { useAppContext } from "@/context"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from "@/components/ui/card"
+
+const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="rounded-md border border-border bg-white dark:bg-black p-2 shadow-sm">
+        <p className="text-sm font-medium text-foreground">{label}</p>
+        <p className="text-sm text-foreground">
+          <span className="text-muted-foreground">Sales: </span>
+          <span className="font-medium">₦{payload[0].value?.toLocaleString()}</span>
+        </p>
+      </div>
+    )
+  }
+
+  return null
+}
 
 export function BarchatComponent({ orders: propOrders }: { orders?: any[] }) {
   // Use orders from props if provided, otherwise from context
@@ -73,7 +89,6 @@ export function BarchatComponent({ orders: propOrders }: { orders?: any[] }) {
   return (
     <Card className="flex flex-col h-full">
       <CardHeader>
-        <CardTitle>Monthly Sales</CardTitle>
         <CardDescription>Sales for the last 6 months</CardDescription>
       </CardHeader>
       <CardContent className="flex-1">
@@ -88,11 +103,8 @@ export function BarchatComponent({ orders: propOrders }: { orders?: any[] }) {
                 tickFormatter={(value) => `₦${(value / 1000).toFixed(0)}k`}
                 tickMargin={8}
               />
-              <Tooltip
-                formatter={(value: number) => [`₦${value.toLocaleString()}`, "Sales"]}
-                labelFormatter={(label) => `${label}`}
-              />
-              <Bar dataKey="sales" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={30} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="sales" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} barSize={30} />
             </BarChart>
           </ResponsiveContainer>
         </div>

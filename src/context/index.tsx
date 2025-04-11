@@ -42,6 +42,7 @@ export function AppWrapper({children}: {
     const [currentProduct, setCurrentProduct] = useState<IProduct>({} as IProduct);
     const [wishlistDisplay, setWishlistDisplay] = useState([])
     const [allOrders, setAllOrders] = useState([])
+    const [allUsers, setAllUsers] = useState([])
 
     useEffect(() => {
       if(session?.user?._id){
@@ -53,6 +54,31 @@ export function AppWrapper({children}: {
       fetchProducts()
       fetchVisitor()
     },[])
+
+    const fetchAllUsers = async () => {
+      try {
+        const res = await fetch(`/api/users`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+  
+        if (!res.ok) {
+          toast.error("Failed to fetch orders")
+        }
+  
+        const data = await res.json()
+  
+        setAllUsers(data)
+  
+        return data
+      } catch (error) {
+        toast.error("fetchCart error")
+        console.log("fetchCart error:", error)
+        return null
+      }
+    }
  
     async function createOrder(orderData: {
       userId: string;
@@ -526,7 +552,7 @@ export function AppWrapper({children}: {
     }
 
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations, isCartSelection, setIsCartSelection, drawerId, setDrawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, clearFromCart, fetchWishlist, removeFromWishlist, wishlistDisplay, fetchCart, delivery, createOrder, fetchAllOrders, allOrders, setAllOrders, fetchAllVisitors, visitors}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations, isCartSelection, setIsCartSelection, drawerId, setDrawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, clearFromCart, fetchWishlist, removeFromWishlist, wishlistDisplay, fetchCart, delivery, createOrder, fetchAllOrders, allOrders, setAllOrders, fetchAllVisitors, visitors, allUsers, fetchAllUsers}}>
             { children }
         </AppContext.Provider>
     )

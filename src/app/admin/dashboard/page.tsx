@@ -1,48 +1,24 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useAppContext } from "@/context"
 import { Card, CardContent } from "@/components/ui/card"
-import { toast } from "sonner"
 import { DonutComponent } from "@/components/charts/Donut"
 import { BarchatComponent } from "@/components/charts/Barchat"
 import OrdersTable from "@/components/OrderTable"
 import { RadarChartComponent } from "@/components/RadarChart"
+import Link from "next/link"
+import ProductsTable from "@/components/ProductTable"
 
 export default function DashboardPage() {
-  const { fetchAllOrders, allOrders, fetchAllVisitors, visitors, } = useAppContext()
-  const [allUsers, setAllUsers] = useState([])
+  const { fetchAllOrders, allOrders, fetchAllVisitors, visitors, allUsers, fetchAllUsers, products } = useAppContext()
+
 
   useEffect(() => {
     fetchAllOrders()
     fetchAllUsers()
     fetchAllVisitors()
   }, [])
-
-  const fetchAllUsers = async () => {
-    try {
-      const res = await fetch(`/api/users`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-
-      if (!res.ok) {
-        toast.error("Failed to fetch orders")
-      }
-
-      const data = await res.json()
-
-      setAllUsers(data)
-
-      return data
-    } catch (error) {
-      toast.error("fetchCart error")
-      console.log("fetchCart error:", error)
-      return null
-    }
-  }
 
   function calculateMonthlySales(allOrders: any[]): number {
     const now = new Date()
@@ -84,11 +60,13 @@ export default function DashboardPage() {
             }).length
           : 0,
       description: "Total Users this month",
+      link:'users'
     },
     {
       header: "Total Sales",
       value: allOrders?.length > 0 ? calculateMonthlySales(allOrders) : 0,
       description: "New Sales this month",
+      link:'orders'
     },
     {
       header: "Total Orders",
@@ -104,6 +82,7 @@ export default function DashboardPage() {
             }).length
           : 0,
       description: "Fulfilled Orders this month",
+      link:'orders'
     },
     {
       header: "New Visits",
@@ -115,6 +94,7 @@ export default function DashboardPage() {
             }).length
           : 0,
       description: "Cancelled Orders this month",
+      link:'visitors'
     },
   ]
 
@@ -132,7 +112,7 @@ export default function DashboardPage() {
             orderData.map((order, idx: number) => (
               <Card key={idx} className="overflow-hidden">
                 <CardContent className="p-6 bg-accent-dark rounded-lg">
-                  <div className="flex justify-between items-center">
+                  <Link href={order?.link}><div className="flex justify-between items-center">
                     <div className="space-y-2">
                       <p className="text-text-dark text-sm font-medium">{order?.header}</p>
                       <h2 className="text-2xl font-bold text-text-dark">
@@ -141,7 +121,7 @@ export default function DashboardPage() {
                       <p className="text-xs text-text-dark">{order?.description}</p>
                     </div>
                     <div className="text-gray-400">—</div>
-                  </div>
+                  </div></Link>
                 </CardContent>
               </Card>
             ))}
@@ -181,8 +161,11 @@ export default function DashboardPage() {
         <RadarChartComponent users={allUsers} />
       </div>
   }
-</div>
 
+</div>
+{
+  products?.length > 0 && 
+  <ProductsTable products={products}/>}
 
     </div>
   )

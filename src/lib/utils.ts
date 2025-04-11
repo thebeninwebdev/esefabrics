@@ -8,8 +8,6 @@ type VariantItem = {
     subVariant: string;
   };
   
-
-
   export const groupVariants = (variantArray: VariantItem[]): GroupedVariant[] => {
     return variantArray.reduce((acc: GroupedVariant[], curr) => {
       const found = acc.find(item => item.variantType === curr.variantType);
@@ -125,6 +123,18 @@ export const Menus = [
     name: "Contact",
   },
 ];
+
+export function formatDate(dateString: string) {
+  const date = new Date(dateString)
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date)
+}
+
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
