@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
       description: `Only ${product.price}!`,
       images: [
         {
-          url: `${process.env.NEXTAUTH_URL}/api/og/product?name=${encodeURIComponent(product.name)}&price=${encodeURIComponent(product.price)}&image=${encodeURIComponent(product.images[0].url)}`,
+          url: `${process.env.NEXTAUTH_URL}/api/og/product?name=${encodeURIComponent(product.name)}&price=${encodeURIComponent(product.discountedPrice)}&image=${encodeURIComponent(product.images[0].url)}`,
           width: 1200,
           height: 630,
           alt: product.name,
