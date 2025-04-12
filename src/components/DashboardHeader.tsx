@@ -65,7 +65,7 @@ export default function Header() {
               {navItems.map((navItem, idx) => (
                 <Link
                   key={idx}
-                  href={navItem.href}
+                  href={"/admin/"+navItem.href}
                   onClick={() => setIsOpen(false)}
                   className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
                     navItem.active

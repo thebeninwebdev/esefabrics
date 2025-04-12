@@ -133,7 +133,7 @@ export default function Footer() {
                 href="#">Visit Our Store</Link></li>
                 <li><Link 
                 className="relative inline-block after:absolute after:left-0 after:top-full after:h-[1px] after:w-0 after:bg-text dark:after:bg-text-dark after:transition-all after:duration-500 hover:after:w-full"
-                href="#">Contact Us</Link></li>
+                href="/contact">Contact Us</Link></li>
                 <li><Link 
                 className="relative inline-block after:absolute after:left-0 after:top-full after:h-[1px] after:w-0 after:bg-text dark:after:bg-text-dark after:transition-all after:duration-500 hover:after:w-full"
                 href="/about-us">About Us</Link></li>
