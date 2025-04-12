@@ -49,9 +49,9 @@ export default function ProductComponent({resolvedParams}:any) {
     },[])
   
     useEffect(() => {
-      const product = products?.find((product:IProduct) => product._id === resolvedParams.productId)
+      const product = products?.find((product:IProduct) => product._id === resolvedParams)
       setCurrentProduct(product)
-    },[products, resolvedParams.productId])
+    },[products, resolvedParams])
   
     useEffect(() => {
       (async () => {

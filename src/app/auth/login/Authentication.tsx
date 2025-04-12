@@ -126,7 +126,7 @@ export default function Authentication() {
             ?
             "Enter your email address so we can find your account."
             :
-            "Securely access your account and take control of your cryptocurrency assets"
+            "Securely access your account and take control of your fashion style"
             }
           </p>
         </div>

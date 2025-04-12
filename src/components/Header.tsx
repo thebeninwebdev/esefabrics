@@ -10,8 +10,7 @@ import Link from "next/link";
 import { useAppContext } from "@/context";
 import { Badge } from "./ui/badge";
 import { useSession, signOut } from "next-auth/react";
-import { Button } from "./ui/button";
-import { LogOut } from "lucide-react";
+import { LogOut, LogIn } from "lucide-react";
 export default function Header() {
   const {cart} = useAppContext()
   const {data:session} = useSession();
@@ -30,11 +29,11 @@ export default function Header() {
               <DesktopMenu key={menu.name} name={menu.name}/>
             ))}
           </ul>
-          <div className="flex-center gap-x-5">
+          <div className="flex-center gap-x-3">
             {session?.user ? 
             <button className="p-0" onClick={() => {signOut()}}><LogOut className="w-4 h-4"/></button>
             :
-            <Link href="/auth/login">Login</Link>
+            <Link href="/auth/login"><LogIn className="w-4 h-4"/></Link>
             }
             <div
               aria-label="theme switcher"

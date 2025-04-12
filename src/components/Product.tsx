@@ -23,7 +23,7 @@ export default function Products({products, variations, wishlist}: {products: IP
     <img 
       src={product.images[0].url}
       alt={product.images[0].id} 
-      className="w-full h-64 object-cover block hover:scale-110 transition-transform duration-1000 ease-in-out" 
+      className="w-full h-52 md:h-64 object-cover block hover:scale-110 transition-transform duration-1000 ease-in-out" 
     />
     {wishlist?
     <button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => {
