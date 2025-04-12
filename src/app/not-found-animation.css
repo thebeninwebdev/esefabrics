@@ -1,0 +1,205 @@
+/* Custom 404 page styles with dedicated colors */
+
+/* Custom colors for the 404 page */
+.not-found-page {
+  --nf-background: #0f0f1a;
+  --nf-foreground: #ffffff;
+  --nf-primary: #6d28d9;
+  --nf-primary-glow: #8b5cf6;
+  --nf-secondary: #4c1d95;
+  --nf-muted: #6b7280;
+  --nf-border: #2d2d3a;
+  --nf-accent: #10b981;
+  --nf-error: #ef4444;
+  background-color: var(--nf-background);
+  color: var(--nf-foreground);
+}
+
+/* Text glow effect */
+.not-found-page .text-glow {
+  text-shadow: 0 0 10px rgba(109, 40, 217, 0.5), 0 0 20px rgba(109, 40, 217, 0.3), 0 0 30px rgba(109, 40, 217, 0.2), 0 0
+    40px rgba(109, 40, 217, 0.1);
+  color: var(--nf-primary-glow);
+}
+
+/* Animation classes */
+.not-found-page .animate-text-glow {
+  animation: textGlow 3s ease-in-out infinite alternate;
+  opacity: 0;
+}
+
+.not-found-page .animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.not-found-page .animate-button-glow {
+  animation: buttonGlow 1s ease-out forwards, buttonPulse 3s ease-in-out infinite alternate;
+  opacity: 0;
+}
+
+/* Text and element colors */
+.not-found-page h2 {
+  color: var(--nf-foreground);
+}
+
+.not-found-page p {
+  color: var(--nf-muted);
+}
+
+/* Enhanced button styling */
+.not-found-page .cosmic-button {
+  position: relative;
+  background: linear-gradient(135deg, #6d28d9 0%, #4c1d95 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.025em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 2px rgba(139, 92, 246, 0.3),
+    0 0 15px 2px rgba(139, 92, 246, 0.4);
+  overflow: hidden;
+  text-decoration: none;
+  z-index: 1;
+}
+
+.not-found-page .cosmic-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.not-found-page .cosmic-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05), 0 0 0 2px rgba(139, 92, 246, 0.4),
+    0 0 20px 5px rgba(139, 92, 246, 0.5);
+}
+
+.not-found-page .cosmic-button:hover::before {
+  opacity: 1;
+}
+
+.not-found-page .cosmic-button:active {
+  transform: translateY(0);
+  box-shadow: 0 5px 10px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05), 0 0 0 2px rgba(139, 92, 246, 0.4),
+    0 0 15px 2px rgba(139, 92, 246, 0.4);
+}
+
+.not-found-page .cosmic-button:focus {
+  outline: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 3px rgba(139, 92, 246, 0.5),
+    0 0 15px 2px rgba(139, 92, 246, 0.4);
+}
+
+.not-found-page .cosmic-button .icon {
+  margin-right: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.not-found-page .cosmic-button:hover .icon {
+  transform: translateX(-3px);
+}
+
+.not-found-page .cosmic-button .button-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(139, 92, 246, 0.8) 0%, transparent 70%);
+  opacity: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.not-found-page .cosmic-button:hover .button-glow {
+  opacity: 0.15;
+}
+
+/* SVG element colors */
+.not-found-page .grid-line {
+  stroke: rgba(109, 40, 217, 0.1);
+}
+
+.not-found-page .star {
+  fill: rgba(139, 92, 246, 0.8);
+}
+
+.not-found-page .shooting-star {
+  stroke: rgba(139, 92, 246, 1);
+}
+
+.not-found-page .gradient-1 {
+  --gradient-start: rgba(109, 40, 217, 0.1);
+  --gradient-end: rgba(109, 40, 217, 0.05);
+}
+
+.not-found-page .gradient-2 {
+  --gradient-start: rgba(76, 29, 149, 0.1);
+  --gradient-end: rgba(76, 29, 149, 0.05);
+}
+
+/* Animation keyframes */
+@keyframes textGlow {
+  0% {
+    opacity: 0;
+    text-shadow: none;
+  }
+  20% {
+    opacity: 0.5;
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  }
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3), 0 0 30px rgba(139, 92, 246, 0.2), 0
+      0 40px rgba(139, 92, 246, 0.1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes buttonGlow {
+  from {
+    opacity: 0;
+    box-shadow: none;
+  }
+  to {
+    opacity: 1;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 2px rgba(139, 92, 246, 0.3),
+      0 0 15px 2px rgba(139, 92, 246, 0.4);
+  }
+}
+
+@keyframes buttonPulse {
+  0% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 2px rgba(139, 92, 246, 0.3),
+      0 0 15px 2px rgba(139, 92, 246, 0.4);
+  }
+  100% {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 0 0 2px rgba(139, 92, 246, 0.4),
+      0 0 20px 5px rgba(139, 92, 246, 0.5);
+  }
+}

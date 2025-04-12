@@ -20,11 +20,6 @@ export default function Authentication() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-
-
-  },[resetPassword])
-
   const handleSubmit = async (e:React.FormEvent) => {
     try{
       e.preventDefault()
@@ -60,7 +55,7 @@ export default function Authentication() {
         } else {
           toast.success('Login successful');
         }
-        setTimeout(() => router.push('/dashboard'), 0);// Redirect to dashboard
+        setTimeout(() => router.push('/'), 0);// Redirect to dashboard
         toast.success("Login successful")
         setEmail("")
         setPassword("")

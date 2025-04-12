@@ -29,6 +29,23 @@ export default function UsersPage() {
     }
   },[allUsers])
 
+  function formatNigerianPhoneNumber(phone: string) {
+    if (!phone.startsWith('234')) {
+      return phone; // not a Nigerian number, leave it as is
+    }
+  
+    const countryCode = '+234';
+    const mainNumber = phone.slice(3); // remove the '234'
+    
+    // Group the rest nicely
+    const part1 = mainNumber.slice(0, 3);
+    const part2 = mainNumber.slice(3, 6);
+    const part3 = mainNumber.slice(6);
+  
+    return `${countryCode} ${part1} ${part2} ${part3}`;
+  }
+  
+
     // Filter users based on search term
     const filteredUsers = allUsers.filter((user:any) => {
         const searchLower = searchTerm.toLowerCase()
@@ -75,7 +92,7 @@ export default function UsersPage() {
                     <TableCell className="font-medium">{user.name}</TableCell>
                     <TableCell className="text-nowrap">{user.username}</TableCell>
                     <TableCell className="text-nowrap">{user.email}</TableCell>
-                    <TableCell className="text-nowrap">{user.phone}</TableCell>
+                    <TableCell className="text-nowrap">{formatNigerianPhoneNumber(user.phone)}</TableCell>
                     <TableCell className="text-nowrap">{formatDate(user.created_at)}</TableCell>
                     <TableCell className="text-nowrap">{formatDate(user.last_login)}</TableCell>
                     <TableCell>

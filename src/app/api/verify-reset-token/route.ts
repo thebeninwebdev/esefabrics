@@ -10,8 +10,6 @@ export const POST = async (request:any) => {
         await connectMongoDB()
         const passwordResetToken = crypto.createHash("sha256").update(token).digest("hex")
 
-        console.log(passwordResetToken)
-
         const user = await User.findOne({
             resetToken: passwordResetToken,
             resetTokenExpiry: {$gt: Date.now()}

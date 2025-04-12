@@ -6,10 +6,10 @@ import { useAppContext } from '@/context';
 import { CartItem, IProduct, VariationInterface } from '../types';
 import VariationModal from '@/components/VariationModal';
 import { useSession } from 'next-auth/react';
-import { ShoppingCart as ShoppingCartIcon } from "lucide-react"
+import { ShoppingCart as ShoppingCartIcon, VariableIcon } from "lucide-react"
 
 export default function CartPage() {
-  const {cart, clearFromCart, variations, fetchProducts, fetchVariations, removeFromCart, setIsCartSelection, addToCart, products, currentProduct, setCurrentProduct, fetchCart} = useAppContext()
+  const {cart, clearFromCart, variations, fetchProducts, fetchVariations, removeFromCart, setIsCartSelection, addToCart, products, currentProduct, setCurrentProduct} = useAppContext()
   const {data:session} = useSession()
   const [productId, setProductId] = useState("")
 
@@ -44,15 +44,19 @@ export default function CartPage() {
           {/* Cart items */}
           {cart?.map((item:CartItem) => {
             let productCheck = products.find((product:IProduct) => product._id === item._id);
+            let variationCheck = variations.find((variation:any) => 
+            variation?.reference_id === productCheck._id
+            )
 
   // Determine if the product details have changed
   const titleChanged = productCheck && productCheck.name !== item.title;
-  const priceChanged = productCheck && productCheck.discountedPrice !== item.price;
+  const priceChanged = 
+  productCheck && item?.variant ? variationCheck?.variations.find((variation:any) => variation?.subVariant[0] === (item?.variant as {variant:string}).variant)?.discountedPrice !== item?.price :productCheck.discountedPrice !== item?.price;
   const isChanged = titleChanged || priceChanged;
 
   // Use the updated values if they have changed
   const displayTitle = titleChanged ? productCheck?.title : item.title;
-  const displayPrice = priceChanged ? productCheck?.price : item.price;
+  const displayPrice = priceChanged ? productCheck?.discountedPrice : item?.price;
 
             return(
               <div key={item?.variant?.reference_id || item?._id}>
@@ -82,7 +86,7 @@ export default function CartPage() {
                     <p className="text-gray-500 text-sm mb-2">{item?.variant ? item.variant.variant : ""}</p>
                     <button 
                       onClick={() => clearFromCart(item?._id,item?.variant ? item?.variant.variant : "")}
-                      className="text-gray-500 text-sm underline hover:text-black"
+                      className="text-gray-500 dark:text-text-dark text-sm underline hover:text-black dark:hover:text-primary"
                     >
                       Remove
                     </button>
@@ -113,9 +117,9 @@ export default function CartPage() {
                           removeFromCart(item?._id,'')}
                         }} className="">-</button>
                       <span className="text-lg font-normal">
-                        {cart
-                        .filter((cartItem: CartItem) => cartItem._id === item._id)
-                        .reduce((sum:number, cartItem:CartItem) => sum + (cartItem?.quantity || 0) + (cartItem?.variant?.quantity || 0), 0)}
+                      {
+                        item?.variant ? item?.variant?.quantity:
+                        item?.quantity}
                         </span>
                       <button 
                         onClick={() => {
@@ -138,11 +142,11 @@ export default function CartPage() {
                 
                 {/* Total */}
                 <div className="col-span-2 text-center font-medium">
-                  {Number(item?.price * item?.quantity).toLocaleString("en-NG", {
-                    style: "currency",
-                    currency: "NGN",
-                    minimumFractionDigits: 0,
-                  })}
+                {Number((item?.price || 0) * ((item?.quantity || 0) + (item?.variant?.quantity || 0))).toLocaleString("en-NG", {
+                      style: "currency",
+                      currency: "NGN",
+                      minimumFractionDigits: 0,
+                    })}
                 </div>
               </div>
 
@@ -213,7 +217,7 @@ export default function CartPage() {
                 <div className="mt-3">
                   <button 
                     onClick={() => clearFromCart(item?._id,item?.variant ? item?.variant.reference_id : "")}
-                    className="text-gray-500 text-sm underline hover:text-black"
+                    className="text-gray-500 dark:text-text-dark text-sm underline hover:text-black dark:hover:text-primary"
                   >
                     Remove
                   </button>

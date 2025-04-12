@@ -1,101 +1,166 @@
-// components/ImageMagnifier.tsx
-import React, { useState, useRef } from 'react';
+"use client"
+
+import type React from "react"
+
+import { useState, useRef, useEffect } from "react"
+import { useMediaQuery } from "@/hooks/use-media-query"
 
 interface ImageMagnifierProps {
-  src: string;
-  width: number;
-  height: number;
-  magnifierSize?: number;
-  zoomLevel?: number;
-  alt?: string;
+  src: string
+  width?: number
+  height?: number
+  magnifierHeight?: number
+  magnifierWidth?: number
+  zoomLevel?: number
+  alt: string
 }
 
-interface MousePosition {
-  x: number;
-  y: number;
-}
-
-const ImageMagnifier: React.FC<ImageMagnifierProps> = ({
+const ImageMagnifier = ({
   src,
-  width,
-  height,
-  magnifierSize = 200,
+  width = 400,
+  height = 400,
+  magnifierHeight = 150,
+  magnifierWidth = 150,
   zoomLevel = 2.5,
-  alt = "Product image"
-}) => {
-  const [showMagnifier, setShowMagnifier] = useState<boolean>(false);
-  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
-  const imgRef = useRef<HTMLImageElement>(null);
+  alt,
+}: ImageMagnifierProps) => {
+  const [showZoom, setShowZoom] = useState(false)
+  const [[imgWidth, imgHeight], setImgSize] = useState([0, 0])
+  const [[x, y], setXY] = useState([0, 0])
+  const imgRef = useRef<HTMLImageElement>(null)
 
-  const handleMouseEnter = (): void => {
-    setShowMagnifier(true);
-  };
+  // Check if device is mobile
+  const isMobile = useMediaQuery("(max-width: 768px)")
 
-  const handleMouseLeave = (): void => {
-    setShowMagnifier(false);
-  };
+  // Update image size when it loads
+  useEffect(() => {
+    const updateImgSize = () => {
+      if (imgRef.current) {
+        const { naturalWidth, naturalHeight, width, height } = imgRef.current
+        setImgSize([width, height])
+      }
+    }
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLImageElement>): void => {
-    if (!imgRef.current) return;
-    
-    // Get the image's position relative to the viewport
-    const { left, top, width, height } = imgRef.current.getBoundingClientRect();
-    
-    // Calculate mouse position relative to the image
-    const x = e.clientX - left;
-    const y = e.clientY - top;
-    
-    // Update mouse position state
-    setMousePosition({ x, y });
-  };
+    // Set size on load
+    if (imgRef.current) {
+      if (imgRef.current.complete) {
+        updateImgSize()
+      } else {
+        imgRef.current.addEventListener("load", updateImgSize)
+        return () => {
+          imgRef.current?.removeEventListener("load", updateImgSize)
+        }
+      }
+    }
+  }, [src])
 
-  // Calculate the magnifier position and background position
-  const getMagnifierStyle = (): React.CSSProperties => {
-    const { x, y } = mousePosition;
-    
-    // Calculate the background position for the zoomed effect
-    const backgroundX = (x / width) * 100;
-    const backgroundY = (y / height) * 100;
-    
-    // Calculate magnifier position, adjusted to keep it within bounds
-    const magnifierTop = y - magnifierSize / 2;
-    
-    return {
-      position: 'absolute',
-      left: `${width + 20}px`, // Position on the opposite side
-      top: `${Math.max(0, Math.min(height - magnifierSize, magnifierTop))}px`,
-      width: `${magnifierSize}px`,
-      height: `${magnifierSize}px`,
-      backgroundImage: `url(${src})`,
-      backgroundPosition: `${backgroundX}% ${backgroundY}%`,
-      backgroundSize: `${width * zoomLevel}px ${height * zoomLevel}px`,
-      backgroundRepeat: 'no-repeat',
-      border: '1px solid #ddd',
-      borderRadius: '4px',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-      pointerEvents: 'none',
-      zIndex: 9999999,
-    };
-  };
+  // Handle mouse movement
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!imgRef.current || isMobile) return
+
+    // Get element bounds
+    const { left, top, width, height } = imgRef.current.getBoundingClientRect()
+
+    // Calculate cursor position relative to the image
+    const x = Math.max(0, Math.min(1, (e.clientX - left) / width))
+    const y = Math.max(0, Math.min(1, (e.clientY - top) / height))
+
+    setXY([x, y])
+  }
+
+  // Handle touch movement
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!imgRef.current || !isMobile) return
+    e.preventDefault() // Prevent scrolling
+
+    const touch = e.touches[0]
+
+    // Get element bounds
+    const { left, top, width, height } = imgRef.current.getBoundingClientRect()
+
+    // Calculate touch position relative to the image
+    const x = Math.max(0, Math.min(1, (touch.clientX - left) / width))
+    const y = Math.max(0, Math.min(1, (touch.clientY - top) / height))
+
+    setXY([x, y])
+  }
+
+  // Handle mouse enter/leave
+  const handleMouseEnter = () => {
+    if (!isMobile) setShowZoom(true)
+  }
+
+  const handleMouseLeave = () => {
+    setShowZoom(false)
+  }
+
+  // Handle touch start/end
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isMobile) {
+      const touch = e.touches[0]
+
+      // Get element bounds
+      const { left, top, width, height } = imgRef.current!.getBoundingClientRect()
+
+      // Calculate touch position relative to the image
+      const x = Math.max(0, Math.min(1, (touch.clientX - left) / width))
+      const y = Math.max(0, Math.min(1, (touch.clientY - top) / height))
+
+      setXY([x, y])
+      setShowZoom(true)
+    }
+  }
+
+  const handleTouchEnd = () => {
+    setShowZoom(false)
+  }
 
   return (
-    <>
-      <img
-        ref={imgRef}
-        src={src}
-        alt={alt}
-        // width={width}
-        // height={height}
-        className="cursor-crosshair w-full h-full object-cover bg-inherit"
+    <div className="relative w-full h-full">
+      {/* Main product image */}
+      <div
+        className="w-full h-full cursor-crosshair"
+        onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onMouseMove={handleMouseMove}
-      />
-      {showMagnifier && (
-        <div style={getMagnifierStyle()} />
-      )}
-    </>
-  );
-};
+        onTouchMove={handleTouchMove}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img ref={imgRef} src={src || "/placeholder.svg"} alt={alt} className="w-full h-full object-contain" />
+      </div>
 
-export default ImageMagnifier;
+      {/* Zoom container */}
+      {showZoom && (
+        <div
+          className="absolute z-10 border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg overflow-hidden rounded-md"
+          style={{
+            width: `${magnifierWidth}px`,
+            height: `${magnifierHeight}px`,
+            top: isMobile ? `calc(100% + 10px)` : "10px",
+            right: isMobile ? "auto" : "10px",
+            left: isMobile ? "50%" : "auto",
+            transform: isMobile ? "translateX(-50%)" : "none",
+          }}
+        >
+          <img
+            src={src || "/placeholder.svg"}
+            alt={`${alt} zoomed`}
+            style={{
+              position: "absolute",
+              width: `${imgWidth * zoomLevel}px`,
+              height: `${imgHeight * zoomLevel}px`,
+              maxWidth: "none",
+              maxHeight: "none",
+              left: `${magnifierWidth / 2 - x * imgWidth * zoomLevel}px`,
+              top: `${magnifierHeight / 2 - y * imgHeight * zoomLevel}px`,
+            }}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default ImageMagnifier

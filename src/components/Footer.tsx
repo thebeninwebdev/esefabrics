@@ -48,7 +48,7 @@ export default function Footer() {
                 <p>Email: info@esefabrics.com</p>
                 <p>Phone: +234 901 411 6505</p>
                 <div className='py-6'>
-                <Link href="/directions" className="inline-flex items-center font-medium border-b border-gray-400 text-nowrap">
+                <Link href="/" className="inline-flex items-center font-medium border-b border-gray-400 text-nowrap">
                   Get direction <motion.span className='w-full' initial={{x:0}} whileHover={{x:8}}>
                   <ArrowRight className="ml-1 w-4 h-4" />
                     </motion.span>

@@ -71,7 +71,7 @@ export default function RootLayout({
                   <BottomNav/>
                 </Wrapper>
                 <Toaster position="bottom-right"/>
-              
+
             </ThemeProvider>
           </AppWrapper>
           </LoadingProvider>

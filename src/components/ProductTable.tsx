@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ChevronLeft, ChevronRight, Search, SlidersHorizontal } from "lucide-react"
+import Link from "next/link"
 
 
 // Helper function to format currency
@@ -99,7 +100,7 @@ const allBrands = Array.from(new Set(products.map((product) => product.brand)))
       <Card className="w-full">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Products</CardTitle>
-          <Button variant="outline" size="icon" onClick={() => setShowFilters(!showFilters)}>
+          <Button variant="outline" className="dark:bg-transparent" size="icon" onClick={() => setShowFilters(!showFilters)}>
             <SlidersHorizontal className="h-4 w-4" />
           </Button>
         </CardHeader>
@@ -222,9 +223,10 @@ const allBrands = Array.from(new Set(products.map((product) => product.brand)))
                         </TableCell>
                         <TableCell className="font-medium">
                           <div className="max-w-md">
+                            <Link href={`products/${product._id}`}>
                             <div className="font-medium truncate" title={product.name}>
                               {product.name}
-                            </div>
+                            </div></Link>
                             <div className="text-sm text-muted-foreground">
                               ID: {product._id.substring(product._id.length - 8)}
                             </div>
@@ -252,7 +254,7 @@ const allBrands = Array.from(new Set(products.map((product) => product.brand)))
                         <TableCell>
                           <div className="flex flex-wrap gap-1">
                             {product.categories.map((category: string) => (
-                              <Badge key={category} variant="secondary" className="capitalize">
+                              <Badge key={category} variant="secondary" className="capitalize dark:text-text">
                                 {category}
                               </Badge>
                             ))}
@@ -284,6 +286,7 @@ const allBrands = Array.from(new Set(products.map((product) => product.brand)))
                     size="icon"
                     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
+                     className="dark:bg-transparent"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -294,6 +297,7 @@ const allBrands = Array.from(new Set(products.map((product) => product.brand)))
                     variant="outline"
                     size="icon"
                     onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                     className="dark:bg-transparent"
                     disabled={currentPage === totalPages || totalPages === 0}
                   >
                     <ChevronRight className="h-4 w-4" />

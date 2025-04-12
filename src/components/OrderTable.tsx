@@ -183,7 +183,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
 
             {/* Clear filters button - only show when filters are active */}
             {(statusFilter !== "all" || searchQuery) && (
-              <Button variant="outline" size="sm" onClick={clearFilters} className="whitespace-nowrap">
+              <Button variant="outline" size="sm" onClick={clearFilters} className="whitespace-nowrap dark:bg-transparent">
                 Clear Filters
               </Button>
             )}
@@ -315,6 +315,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
               onClick={goToFirstPage}
               disabled={currentPage === 1 || filteredOrders.length === 0}
               aria-label="Go to first page"
+              className="dark:bg-transparent"
             >
               <ChevronsLeft className="h-4 w-4" />
             </Button>
@@ -324,6 +325,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
               onClick={goToPreviousPage}
               disabled={currentPage === 1 || filteredOrders.length === 0}
               aria-label="Go to previous page"
+              className="dark:bg-transparent"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -338,6 +340,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
               onClick={goToNextPage}
               disabled={currentPage === totalPages || filteredOrders.length === 0}
               aria-label="Go to next page"
+              className="dark:bg-transparent"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -347,6 +350,7 @@ export default function OrdersTable({ orders }: OrdersTableProps) {
               onClick={goToLastPage}
               disabled={currentPage === totalPages || filteredOrders.length === 0}
               aria-label="Go to last page"
+              className="dark:bg-transparent"
             >
               <ChevronsRight className="h-4 w-4" />
             </Button>

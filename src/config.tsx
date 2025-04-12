@@ -1,6 +1,6 @@
 import { usePathname } from 'next/navigation';
 
-import { Bell, Briefcase, Home, Settings, User } from 'lucide-react';
+import { Shapes, Home, ArrowLeftRight, User, SquareChartGantt, Ungroup, Eye } from 'lucide-react';
 
 export const NavItems = () => {
   const pathname = usePathname();
@@ -11,31 +11,52 @@ export const NavItems = () => {
 
   return [
     {
-      name: 'Home',
-      href: '/dashboard',
+      name: 'Dashboard',
+      href: '/admin/dashboard',
       icon: <Home size={20} />,
       active: isNavItemActive(pathname, '/dashboard'),
       position: 'top',
     },
     {
       name: 'Products',
-      href: '/',
-      icon: <User size={20} />,
-      active: pathname === '/',
+      href: '/admin/products',
+      icon: <SquareChartGantt size={20} />,
+      active: pathname === '/products',
       position: 'top',
     },
     {
       name: 'Categories',
-      href: '/categories',
-      icon: <Bell size={20} />,
+      href: '/admin/categories',
+      icon: <Ungroup size={20} />,
       active: isNavItemActive(pathname, '/categories'),
       position: 'top',
     },
     {
-      name: 'Projects',
-      href: '/projects',
-      icon: <Briefcase size={20} />,
+      name: 'Orders',
+      href: '/admin/orders',
+      icon: <ArrowLeftRight size={20} />,
       active: isNavItemActive(pathname, '/projects'),
+      position: 'top',
+    },
+    {
+      name: 'Users',
+      href: '/admin/users',
+      icon: <User size={20} />,
+      active: isNavItemActive(pathname, '/users'),
+      position: 'top',
+    },
+    {
+      name: 'Variants',
+      href: '/admin/variants',
+      icon: <Shapes size={20} />,
+      active: isNavItemActive(pathname, '/variants'),
+      position: 'top',
+    },
+    {
+      name: 'Visitors',
+      href: '/admin/visitors',
+      icon: <Eye size={20} />,
+      active: isNavItemActive(pathname, '/visitors'),
       position: 'top',
     },
   ];

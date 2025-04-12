@@ -84,7 +84,7 @@ export async function GET(req: Request){
 //Handle PATCH requests to updatea a category
 export async function PATCH(req: Request){
     try{
-        const {id, name, description, brand, retailPrice, discountedPrice, stock, categories, images, } = await req.json()
+        const {id, name, description, brand, retailPrice, discountedPrice, stock, categories, images } = await req.json()
     
         //Validate input
         if(!name || !description || !brand || !retailPrice || !discountedPrice || !stock || !categories || !images || !id ){
@@ -96,7 +96,7 @@ export async function PATCH(req: Request){
 
     await connectMongoDB();
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, {name, description, brand, retailPrice, discountedPrice, stock, categories, images, }, {new: true})
+    const updatedProduct = await Product.findByIdAndUpdate(id, {name, description, brand, retailPrice, discountedPrice, stock, categories, images }, {new: true})
 
     if(!updatedProduct){
         return NextResponse.json(

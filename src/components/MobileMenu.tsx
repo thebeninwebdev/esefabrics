@@ -6,6 +6,7 @@ import { RiMenu2Line, RiCloseFill } from "react-icons/ri";
 import { IoChevronDown} from "react-icons/io5"
 import { Menus } from "@/lib/utils";
 import { useAppContext } from "@/context";
+import Link from "next/link";
 
 export const MobMenu = () => {
   const {isOpen, setIsOpen} = useAppContext()
@@ -37,7 +38,7 @@ export const MobMenu = () => {
         animate={{ x: isOpen ? "0%" : "-100%" }}
       >
         <ul>
-          {Menus.map(({ name, subMenu }, i) => {
+          {Menus.map(({ name, subMenu, link }, i) => {
             const isClicked = clicked === i;
             const hasSubMenu = subMenu?.length;
             return (
@@ -46,7 +47,7 @@ export const MobMenu = () => {
                   className="flex-center-between p-4 hover:bg-white/5 rounded-md cursor-pointer relative"
                   onClick={() => setClicked(isClicked ? null : i)}
                 >
-                  {name}
+                  {link? <Link href={link}>{name}</Link>:name}
                   {hasSubMenu && (
                     <IoChevronDown
                       className={`ml-auto ${isClicked && "rotate-180"} `}
@@ -60,13 +61,13 @@ export const MobMenu = () => {
                     variants={subMenuDrawer}
                     className="ml-5"
                   >
-                    {subMenu.map(({ name, icon: Icon }) => (
+                    {subMenu.map(({ name, icon: Icon, link }) => (
                       <li
                         key={name}
                         className="p-2 flex-center hover:bg-white/5 rounded-md gap-x-2 cursor-pointer"
                       >
                         <Icon size={17} />
-                        {name}
+                        {link? <Link href={link}>{name}</Link>:name}
                       </li>
                     ))}
                   </motion.ul>

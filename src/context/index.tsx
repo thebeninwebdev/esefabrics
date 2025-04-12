@@ -5,6 +5,7 @@ import React, {createContext, useContext, useState, useEffect, useCallback} from
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 import { useLoading } from './LoadingContext';
+import { useRouter } from 'next/navigation';
 
 type WishlistItem = {
   _id: string;
@@ -23,6 +24,7 @@ export function AppWrapper({children}: {
     children: React.ReactNode;
 }){
     const {isLoading, setLoading} = useLoading()
+    const router = useRouter()
     const {data:session} = useSession();
     const EMAIL:string = "osayivictoryeseosa@gmail.com"
     const COMPANY_NAME:string = "mrEseosa_"
@@ -43,6 +45,8 @@ export function AppWrapper({children}: {
     const [wishlistDisplay, setWishlistDisplay] = useState([])
     const [allOrders, setAllOrders] = useState([])
     const [allUsers, setAllUsers] = useState([])
+    const [orders, setOrders] = useState([])
+    const [user, setUser] = useState({})
 
     useEffect(() => {
       if(session?.user?._id){
@@ -53,7 +57,34 @@ export function AppWrapper({children}: {
     useEffect(() => {
       fetchProducts()
       fetchVisitor()
+      fetchOrders()
+      fetchVariations()
     },[])
+
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/users', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error('Failed to fetch user');
+        }
+    
+        const userData = await response.json();
+
+       setUser(userData)
+
+       return userData;
+
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        return null;
+      }
+    }
 
     const fetchAllUsers = async () => {
       try {
@@ -122,6 +153,7 @@ export function AppWrapper({children}: {
     }
 
     const removeFromCart = async (productId: string, reference_id: string) => {
+      if(!session?.user) router.push('/auth/login')
       if (!productId) return;
 
       const userId = session?.user?._id as string
@@ -197,6 +229,7 @@ export function AppWrapper({children}: {
     };
 
     const clearFromCart = async (productId: string, reference_id: string) => {
+      if(!session?.user) router.push('/auth/login')
       const userId = session?.user?._id as string
       if (!productId || !userId) return;
       try{
@@ -244,6 +277,7 @@ export function AppWrapper({children}: {
     }
 
     const clearCart = async () => {
+      if(!session?.user) router.push('/auth/login')
       const userId = session?.user?._id
 
       if(!userId) return
@@ -275,6 +309,7 @@ export function AppWrapper({children}: {
     };
 
     const addToCart = async (item: CartItem) => {
+      if(!session?.user) router.push('/auth/login')
       const userId = session?.user?._id as string
 
       if (!item || !userId) return;
@@ -371,7 +406,6 @@ export function AppWrapper({children}: {
         setCart(data.items);
 
         return data;
-
       } catch (error) {
         toast.error("fetchCart error");
         console.log('fetchCart error:', error);
@@ -446,6 +480,26 @@ export function AppWrapper({children}: {
       }
     }
 
+    async function fetchOrders() {
+      try {
+        const res = await fetch("/api/orders", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }); 
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch cart');
+        }
+
+        const data = await res.json();
+        setOrders(data);
+      } catch (err: any) {
+        console.log("Unknown error");
+      }
+    }
+
     const fetchWishlist = useCallback(async (userId:string) => {
         try {
             const res = await fetch(`/api/wishlist?userId=${userId}`);
@@ -475,6 +529,7 @@ export function AppWrapper({children}: {
     }, []);
 
     async function removeFromWishlist(productId: string, userId:string) {
+      if(!session?.user) router.push('/auth/login')
       try {
         setLoading(true)
         const res = await fetch("/api/wishlist", {
@@ -498,6 +553,7 @@ export function AppWrapper({children}: {
     }
     
     const updateQuantity = (productId: string, quantity: number) => {
+      if(!session?.user) router.push('/auth/login')
       setCart((prevCart) =>
         prevCart.map((i) =>
           i._id === productId ? { ...i, quantity } : i
@@ -552,7 +608,7 @@ export function AppWrapper({children}: {
     }
 
     return(
-        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations, isCartSelection, setIsCartSelection, drawerId, setDrawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, clearFromCart, fetchWishlist, removeFromWishlist, wishlistDisplay, fetchCart, delivery, createOrder, fetchAllOrders, allOrders, setAllOrders, fetchAllVisitors, visitors, allUsers, fetchAllUsers}}>
+        <AppContext.Provider value={{EMAIL, COMPANY_NAME, isOpen,setIsOpen, categories, fetchCategories, variants, setVariants, fetchVariants, fetchProducts, products, selectedVariant, setSelectedVariant, cart, addToCart, removeFromCart, clearCart, updateQuantity, addVariant, variations, fetchVariations, isCartSelection, setIsCartSelection, drawerId, setDrawerId, isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct, clearFromCart, fetchWishlist, removeFromWishlist, wishlistDisplay, fetchCart, delivery, createOrder, fetchAllOrders, allOrders, setAllOrders, fetchAllVisitors, visitors, allUsers, fetchAllUsers, orders, setOrders, fetchOrders, fetchUser, user}}>
             { children }
         </AppContext.Provider>
     )

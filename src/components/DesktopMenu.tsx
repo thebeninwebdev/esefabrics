@@ -5,6 +5,7 @@ import { IoChevronDown} from "react-icons/io5"
 import { motion } from "framer-motion";
 import { MainMenuItem } from "@/app/types";
 import { Menus } from "@/lib/utils";
+import Link from "next/link";
 
   export const DesktopMenu = ({ name }:{name: string}) => {
   const [isHover, toggleHover] = useState(false);
@@ -47,14 +48,15 @@ import { Menus } from "@/lib/utils";
       key={menu?.name}
     >
       <span className="flex-center gap-1 hover:bg-white/5 cursor-pointer px-3 py-1 rounded-xl">
-        {menu?.name}
+      {menu?.link ? <Link href={menu?.link}>{menu?.name}</Link>:menu?.name}
+        
         {hasSubMenu && (
           <IoChevronDown className="mt-[0.6px] group-hover/link:rotate-180 duration-200" />
         )}
       </span>
       {hasSubMenu && (
         <motion.div
-          className="sub-menu"
+          className="absolute top-[4.2rem] p-[15px] rounded-[6px] origin-[50%_-170px] backdrop-blur bg-secondary/[0.4] dark:bg-black/[0.4]"
           initial="exit"
           animate={isHover ? "enter" : "exit"}
           variants={subMenuAnimate}
@@ -77,13 +79,13 @@ import { Menus } from "@/lib/utils";
                     </p>
                   )}
                   <div className="flex-center gap-x-4 group/menubox">
-                    <div className="bg-white/5 w-fit p-2 rounded-md group-hover/menubox:bg-white group-hover/menubox:text-gray-900 duration-300">
-                      {submenu.icon && <submenu.icon />}
+                    <div className="bg-primary/90 w-fit p-2 rounded-md group-hover/menubox:opacity-75 group-hover/menubox:text-gray-900 duration-300">
+                      {submenu.icon && <submenu.icon className="text-text-dark"/>}
                     </div>
-                    <div>
+                    <Link href={submenu?.link || '/'}>
                       <h6 className="font-semibold">{submenu.name}</h6>
-                      <p className="text-sm text-gray-400">{submenu.desc}</p>
-                    </div>
+                      <p className="text-sm text-text dark:text-text-dark">{submenu.desc}</p>
+                    </Link>
                   </div>
                 </div>
               ))}

@@ -118,7 +118,7 @@ export const SideNavItem: React.FC<{
           href={path}
           className={`h-full relative flex items-center whitespace-nowrap rounded-md ${
             active
-              ? 'font-base text-sm bg-neutral-200 shadow-sm text-text dark:bg-text-dark dark:text-text-dark'
+              ? 'font-base text-sm bg-neutral-200 shadow-sm text-text dark:bg-text dark:text-text-dark'
               : 'hover:bg-neutral-200 hover:text-neutral-700 text-text dark:text-text-dark dark:hover:bg-neutral-800 dark:hover:text-white'
           }`}
         >

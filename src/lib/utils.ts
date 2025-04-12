@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { GroupedVariant } from "@/app/types";
-import { CiBag1, CiBoxes, CiClock1, CiCoinInsert, CiDeliveryTruck, CiFileOn, CiMap, CiMemoPad, CiShoppingCart, CiTrash, CiUnlock, CiViewList } from "react-icons/ci";
+import { CiBag1, CiDeliveryTruck, CiFileOn, CiMap, CiShoppingCart, CiTrash, CiUnlock, CiViewList } from "react-icons/ci";
+import { LogIn } from "lucide-react";
 
 type VariantItem = {
     variantType: string;
@@ -9,7 +10,7 @@ type VariantItem = {
   };
   
   export const groupVariants = (variantArray: VariantItem[]): GroupedVariant[] => {
-    return variantArray.reduce((acc: GroupedVariant[], curr) => {
+    return variantArray?.reduce((acc: GroupedVariant[], curr) => {
       const found = acc.find(item => item.variantType === curr.variantType);
       
       if (found) {
@@ -19,7 +20,7 @@ type VariantItem = {
       } else {
         acc.push({
           variantType: curr.variantType,
-          variants: [curr.subVariant]
+          variants: [curr.subVariant[0]]
         });
       }
   
@@ -29,56 +30,37 @@ type VariantItem = {
 
 export const Menus = [
   {
-    name: "Deals",
-    subMenuHeading: ["Design", "Scale"],
-    subMenu: [
-      {
-        name: "New Arrivals",
-        desc: "recently added products.",
-        icon: CiMemoPad,
-      },
-      {
-        name: "Best Sellers",
-        desc: "popular or top-rated products.",
-        icon: CiCoinInsert,
-      },
-      {
-        name: "Limited Edition",
-        desc: "limited-time products.",
-        icon: CiClock1,
-      },
-    ],
-    gridCols: 2,
+    name: "Home",
+    link: "/"
   },
   {
     name: "Account",
-    subMenuHeading: ["Get started", "Programs", "Recent"],
+    subMenuHeading: ["Get started", "account", "shop"],
     subMenu: [
       {
         name: "Orders",
         desc: "View, track, and manage orders.",
         icon: CiBag1,
+        link: '/orders'
       },
       {
         name: "Wishlist",
         desc: "Save favorites for future purchases.",
         icon: CiMap,
+        link: '/wishlist'
       },
       {
         name: "Cart",
         desc: "Review items before completing purchase.",
         icon: CiShoppingCart,
+        link: '/cart'
       },
       {
-        name: "Close Account",
-        desc: "Permanently delete your account here.",
+        name: "Account details",
+        desc: "View your account information",
         icon: CiTrash,
+        link: '/account-details'
       },
-      {
-        name: "Store locator",
-        desc: "Locate stores based on address.",
-        icon: CiTrash,
-      }
     ],
     gridCols: 2,
   },
@@ -89,38 +71,36 @@ export const Menus = [
         name: "FAQs",
         desc: "A section addressing common questions about orders, shipping, returns, and payments.",
         icon: CiFileOn,
+        link: '/faq'
       },
       {
         name: "Shipping & delivery",
         desc: "Information on shipping options, delivery times, and any international shipping policies.",
         icon: CiDeliveryTruck,
-      },
-      {
-        name: "Returns & Refunds",
-        desc: "Details on your return policy, how to initiate returns, and the refund process.",
-        icon: CiBoxes,
+        link: '/delivery-return'
       },
       {
         name:"Terms and conditions",
         desc:"",
-        icon: CiViewList
+        icon: CiViewList,
+        link: '/terms'
       },
       {
         name:"Privacy Policy",
         desc:"",
-        icon: CiUnlock
+        icon: CiUnlock,
+        link:'/privacy-policy'
       },
     ],
     gridCols: 2,
   },
   {
     name: "About us",
-  },
-  {
-    name: "Pricing",
+    link: "/about-us"
   },
   {
     name: "Contact",
+    link: '/contact'
   },
 ];
 

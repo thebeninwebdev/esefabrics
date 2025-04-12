@@ -3,22 +3,23 @@
 import { useEffect, useState } from "react";
 import { HomeSlider } from "@/components/HomeSlider";
 import Marquee from "react-fast-marquee"
-import { TbChristmasTree } from "react-icons/tb";
+import { Egg } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import SizeChart from '@/components/SizeChart';
 import { Button } from "@/components/ui/button";
+import VariationModal from "@/components/VariationModal";
+import Products from "@/components/Product";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"
-import { Eye } from "lucide-react";
+} from "@/components/ui/carousel";
 import { ArrowRight } from "lucide-react";
 import { useAppContext } from "@/context";
 import Link from "next/link"
-import { IProduct, IImage, GroupedVariant, CartItem } from '@/app/types';
+import { IProduct, IImage, GroupedVariant, CartItem, VariationInterface } from '@/app/types';
 import {
   Sheet,
   SheetContent,
@@ -61,24 +62,20 @@ const DiscoveryCard = () => {
 };
 
 export default function Home() {
-  const {categories, fetchCategories, products, fetchProducts, addToCart, removeFromCart, updateQuantity, cart, variants, setVariants,} = useAppContext()
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [drawerId, setDrawerId] = useState("")
+  const {categories, fetchCategories, products, fetchProducts, addToCart, removeFromCart, cart, variants, variations, setIsCartSelection,drawerId,isDrawerOpen, setIsDrawerOpen, currentProduct, setCurrentProduct} = useAppContext()
   const [cleanHtml, setCleanHtml] = useState('');
   const [groupedArray, setGroupedArray] = useState<GroupedVariant[]>([] as GroupedVariant[])
-  const [currentProduct, setCurrentProduct] = useState<IProduct>({} as IProduct);
   
-
   useEffect(() => {
     fetchCategories()
     fetchProducts()
   },[])
 
   useEffect(() => {
-    if(currentProduct?.description){
-      setGroupedArray(groupVariants(currentProduct?.variantArray) )
+    if(currentProduct?.description && variations){
+      setGroupedArray(groupVariants(variations.find((variation:any) => variation?.reference_id === currentProduct?._id)?.variations))
     }
-  },[currentProduct])
+  },[currentProduct, variations])
 
   useEffect(() => {
 
@@ -113,9 +110,9 @@ export default function Home() {
       
     <Marquee pauseOnHover className="py-6 bg-complement dark:bg-complement-dark text-2xl text-text-dark cursor-pointer ">
       <div className="flex gap-5">
-      <div className="flex items-center"><TbChristmasTree/>&nbsp;Christmas Sale: Save Up to 70%&nbsp;<TbChristmasTree/></div>
-      <div className="flex items-center"><TbChristmasTree/>&nbsp;Christmas Sale: Save Up to 70%&nbsp;<TbChristmasTree/></div>
-      <div className="flex items-center"><TbChristmasTree/>&nbsp;Christmas Sale: Save Up to 70%&nbsp;<TbChristmasTree/></div>
+      <div className="flex items-center"><Egg/>&nbsp;Easter Sale: Save Up to 70%&nbsp;<Egg/></div>
+      <div className="flex items-center"><Egg/>&nbsp;Easter Sale: Save Up to 70%&nbsp;<Egg/></div>
+      <div className="flex items-center"><Egg/>&nbsp;Easter Sale: Save Up to 70%&nbsp;<Egg/></div>
       </div>
     </Marquee>
     <div className="w-full p-4 ">
@@ -132,10 +129,12 @@ export default function Home() {
         <CarouselContent className="-ml-4">
           {categories?.length && categories?.map((category:any) => (
             <CarouselItem key={category?._id} className="pl-4 md:basis-1/3">
+              <Link href={`/category/${category?.category.toLowerCase()}`}>
               <CategoryCard 
                 title={category?.category} 
                 image={category?.link} 
               />
+              </Link>
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -146,53 +145,11 @@ export default function Home() {
   </div>
   <div className=" mx-auto px-2 py-16 space-y-20">
       <h1 className="text-4xl font-bold text-center mb-6">Today's Top Picks</h1>
-      
-      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2">
-        {products?.map((product:IProduct,idx:number) => (
-          <Card key={idx} className="overflow-hidden border-0 rounded-md flex flex-col h-full">
-  <div className="relative">
-    <img 
-      src={product.images[0].url}
-      alt={product.images[0].id} 
-      className="w-full h-auto object-cover block hover:scale-110 transition-transform duration-1000 ease-in-out" 
-    />
-    <button className="absolute top-2 right-2 p-2 text-text-dark dark:text-text opacity-75 hover:opacity-100 bg-primary dark:bg-primary-dark rounded-full" onClick={() => {
-      setDrawerId(product._id as string)
-      setIsDrawerOpen(true)
-      }}><Eye className="w-4 h-4" /></button>
-  </div>
-  <CardContent className="p-4 flex-grow flex flex-col justify-center space-y-2">
-  <h3 className="text-sm font-normal line-clamp-2">
-  {product.name}
-</h3>
-    <div className="flex items-center gap-5">
-    <span className="font-semibold">
-        {Number(product.discountedPrice).toLocaleString("en-NG", {
-          style: "currency",
-          currency: "NGN",
-          minimumFractionDigits: 0,
-        })}
-      </span>
-      <span className="text-gray-400 line-through text-sm">
-        {Number(product.retailPrice).toLocaleString("en-NG", {
-          style: "currency",
-          currency: "NGN",
-          minimumFractionDigits: 0,
-        })}
-      </span>
-      
+      <Products products={products} variations={variations} />
     </div>
-  </CardContent>
-  <CardFooter className="pt-0 px-4 mt-auto">
-    <Button className="w-full text-text-dark dark:text-text">Add to cart</Button>
-  </CardFooter>
-</Card>
-
-        ))}
-      </div>
-    </div>
+    {variations && <VariationModal variationsArray={variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations} currentProduct={currentProduct} />}
     <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-    <SheetTitle>Quick view</SheetTitle>
+    <SheetTitle className="sr-only">Quick view</SheetTitle>
       <SheetContent className="space-y-5 p-0 bg-background dark:bg-background-dark overflow-y-auto text-text dark:text-text-dark">
         <div className="overflow-auto pt-8 w-full">
         <div className="flex w-max gap-3">
@@ -252,20 +209,57 @@ export default function Home() {
     <Variant subVariants={group?.variants} variantType={group?.variantType}/>
   </div>
  ))}
- {cart.find((item:CartItem) => item._id === currentProduct._id) ?<div className="flex justify-between w-36 py-2 px-4 h-max text-2xl font-thin items-center text-text bg-neutral-300 rounded-md">
-   <button onClick={() => updateQuantity(currentProduct._id,1)} className="">-</button>
-   <span className="text-lg font-normal">{cart.find((item:CartItem) => item._id === currentProduct._id).quantity}</span>
-   <button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})}>+</button>
- </div>
- :<Button onClick={() => addToCart({_id:currentProduct._id,title:currentProduct.name,quantity:1,image:currentProduct.images[0],variants})} className="w-full text-text-dark py-6">Add to cart</Button>
- }
+{cart.find((item:CartItem) => item._id === currentProduct._id) ? (
+                <div className="flex justify-between w-36 py-2 px-4 h-max text-2xl font-thin items-center text-text bg-neutral-300 rounded-md ">
+                  <button onClick={() => {
+                    if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
+                      setIsCartSelection(true)
+                    }else{
+                      removeFromCart(currentProduct._id,'')}
+                    }} className="">-</button>
+                  <span className="text-lg font-normal">{cart
+  .filter((item: CartItem) => item._id === currentProduct._id)
+  .reduce((sum:number, item:CartItem) => sum + item.quantity, 0)}</span>
+                  <button onClick={() => {
+                  if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
+                    setIsCartSelection(true)
+                  }else{
+                    addToCart({
+                      _id:currentProduct?._id,
+                      title:currentProduct.name,
+                      quantity:1,
+                      price:currentProduct.discountedPrice,
+                      image:currentProduct.images[0].url
+                    })
+                  }
+                  }}>+</button>
+                </div>
+              ) : (
+                <Button 
+                onClick={() => {
+                  if(variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.length > 0){
+                    setIsCartSelection(true)
+                  }else{
+                  addToCart(
+                  {
+                    _id:currentProduct?._id,
+                    title:currentProduct.name,
+                    quantity:1,
+                    price:currentProduct.discountedPrice,
+                    image:currentProduct.images[0].url
+                  }
+                  )}
+                }} className="w-full text-text-dark py-6">
+                  Add to cart
+                </Button>
+              )}
 
  <div className="pt-10">
- <Link href="/" className="underline">View full details</Link>
+ <Link href={`/product-page/${currentProduct?._id}`} className="underline">View full details</Link>
  </div>
  
 </div>
-      </SheetContent>
+  </SheetContent>
     </Sheet>
     </main>
   );

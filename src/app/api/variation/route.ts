@@ -59,10 +59,10 @@ export const POST = async (req: Request) => {
 //Handle PATCH requests to updatea a category
 export async function PATCH(req: Request){
     try{
-    const {id, variation}: {id: string; variation: VariationInterface} = await req.json()
+    const {id, variations, reference_id}: {id: string; variations: VariationInterface, reference_id:string} = await req.json()
     
     //Validate input
-    if(!id || !variation){
+    if(!id || !variations || !reference_id){
         return NextResponse.json(
             {message: "ID and valid category are required"},
             {status: 400}
@@ -71,7 +71,7 @@ export async function PATCH(req: Request){
 
     await connectMongoDB();
 
-    const updatedVariation = await Variation.findByIdAndUpdate(id, variation, {new: true})
+    const updatedVariation = await Variation.findByIdAndUpdate(id, {reference_id,variations}, {new: true})
 
     if(!updatedVariation){
         return NextResponse.json(

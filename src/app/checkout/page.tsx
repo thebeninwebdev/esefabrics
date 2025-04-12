@@ -164,6 +164,7 @@ export default function CheckoutInfo() {
               orderNote: formData.orderNote,
               status: 'cancelled'
             })
+            clearCart()
             toast.error("Your transaction has been cancelled");
           },
         });

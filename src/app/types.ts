@@ -5,6 +5,7 @@ interface SubMenuItem {
     name: string; // Name of the sub-menu item
     desc: string; // Description of the sub-menu item
     icon: React.ElementType; // Icon component type
+    link?: string;
   }
   
   //type for the product image
@@ -50,6 +51,7 @@ interface SubMenuItem {
     subMenuHeading?: string[]; 
     subMenu?: SubMenuItem[]; 
     gridCols?: number; 
+    link?: string;
   }
   
   //type for product

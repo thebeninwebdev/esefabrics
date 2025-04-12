@@ -9,9 +9,12 @@ import { CiShoppingCart } from "react-icons/ci";
 import Link from "next/link";
 import { useAppContext } from "@/context";
 import { Badge } from "./ui/badge";
-
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "./ui/button";
+import { LogOut } from "lucide-react";
 export default function Header() {
   const {cart} = useAppContext()
+  const {data:session} = useSession();
   return (
     <div>
       <header className="h-16 text-[15px] fixed inset-0 flex-center bg-background dark:bg-background-dark bg- z-20 shadow-lg">
@@ -28,6 +31,11 @@ export default function Header() {
             ))}
           </ul>
           <div className="flex-center gap-x-5">
+            {session?.user ? 
+            <button className="p-0" onClick={() => {signOut()}}><LogOut className="w-4 h-4"/></button>
+            :
+            <Link href="/auth/login">Login</Link>
+            }
             <div
               aria-label="theme switcher"
               className="bg-white/5 relative p-[.2rem] shadow rounded-full flex-center"

@@ -44,7 +44,7 @@ export function HomeSlider() {
           <div className="absolute inset-0 bg-black bg-opacity-40 text-slate-200 flex p-2 sm:p-5 flex-col justify-between">
             <div className="space-y-2">
             <p className="max-w-sm">{banners[index].sideKickText.toUpperCase()}</p>
-            <Link href='/' className="underline text-sm lg:block hidden">SHOP NOW</Link>
+            <Link href='/categories' className="underline text-sm lg:block hidden">SHOP NOW</Link>
             </div>
             
             <div className="space-y-3">
