@@ -1,17 +1,40 @@
 // app/page.tsx
 "use client";
 
-import {useEffect} from "react";
+import {useState,useEffect} from "react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAppContext } from "@/context";
+import CategoriesPageSkeleton from "@/components/skeleton/categories-page-skeleton";
 
 export default function Home() {
     const {categories, fetchCategories} = useAppContext()
+      const [isLoading, setIsLoading] = useState(true)
+    
+      useEffect(() => {
+        // Show skeleton initially
+        setIsLoading(true)
+    
+        // If categories are available, hide skeleton after a short delay
+        if (categories && categories.length > 0) {
+          const timer = setTimeout(() => {
+            setIsLoading(false)
+          }, 500) // Short delay for smooth transition
+    
+          return () => clearTimeout(timer)
+        }
+      }, [categories])
 
     useEffect(() => {
         fetchCategories()
     },[])
+
+    if (isLoading) {
+      return ( <div className="container mx-auto pb-10 px-4">
+              <p className="text-md sm:text-lg font-semibold mb-8 text-center py-16">Shop through our latest selection of Fashion </p>
+      <CategoriesPageSkeleton count={categories?.length || 6} />
+      </div>)
+    }
 
   return (
     <div className="container mx-auto pb-10 px-4">

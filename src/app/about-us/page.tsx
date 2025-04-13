@@ -18,7 +18,7 @@ export default function page() {
     const words = text.split(" ");
   return (
     <div className='space-y-5 overflow-x-hidden'>
-        <div className='relative h-[400px] w-full bg-cover bg-center' style={{backgroundImage: "url('/about-us.jpg')"}}>
+        <div className='relative h-[400px] w-full bg-cover bg-center' style={{backgroundImage: "url('/about-us.webp')"}}>
             <div className="absolute inset-0 bg-black opacity-60"></div>
             <motion.div 
             initial="hidden"
@@ -74,7 +74,7 @@ export default function page() {
                         
                  className="w-full aspect-square">
                     <img
-                        src="/founder.jpg"
+                        src="/founder.webp"
                         alt="Our Story"
                         className='w-full h-full object-cover shadow-lg'
                     />
@@ -105,7 +105,7 @@ export default function page() {
             }}
             >
                     <img
-                        src="/about-2.jpg"
+                        src="/about-2.webp"
                         alt="Our Story"
                         className='w-full h-full object-cover shadow-lg'
                     />

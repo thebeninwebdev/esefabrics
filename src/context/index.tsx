@@ -81,7 +81,7 @@ export function AppWrapper({children}: {
        return userData;
 
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.log('Error fetching user:', error);
         return null;
       }
     }
@@ -106,7 +106,6 @@ export function AppWrapper({children}: {
         return data
       } catch (error) {
         toast.error("fetchCart error")
-        console.log("fetchCart error:", error)
         return null
       }
     }
@@ -134,7 +133,7 @@ export function AppWrapper({children}: {
         const newOrder = await res.json();
         return newOrder;
       } catch (error) {
-        console.error("[CREATE_ORDER_FRONTEND]", error);
+        console.log("[CREATE_ORDER_FRONTEND]", error);
         throw error;
       }
     }
@@ -220,7 +219,7 @@ export function AppWrapper({children}: {
         toast.success('Item removed from cart');
 
       } catch (error) {
-        console.error('Failed to remove from cart:', error);
+        console.log('Failed to remove from cart:', error);
         toast.error("failed to remove item from cart")
         
       } finally {
@@ -245,7 +244,6 @@ export function AppWrapper({children}: {
         } else{
           
              updatedCart = currentCart.filter((i) => {
-              console.log(i.variant?.reference_id, reference_id)
               return i.variant?.reference_id !== reference_id});
         }
 
@@ -268,7 +266,6 @@ export function AppWrapper({children}: {
         toast.success('Item cleared from cart');
 
       } catch (error) {
-        console.log('Failed to clear from cart:', error);
         toast.error("failed to clear item from cart")
         // (optional) You could roll back the cart update here if you want
       }finally{
@@ -300,7 +297,6 @@ export function AppWrapper({children}: {
         setCart([]);
 
       }catch(error){
-        console.log(error)
         toast.error("Failed to clear cart")
       }finally{
         setLoading(false)
@@ -408,7 +404,6 @@ export function AppWrapper({children}: {
         return data;
       } catch (error) {
         toast.error("fetchCart error");
-        console.log('fetchCart error:', error);
         return null;
       }
     };
@@ -435,7 +430,6 @@ export function AppWrapper({children}: {
 
       } catch (error) {
         toast.error("fetchCart error");
-        console.log('fetchCart error:', error);
         return null;
       }
     };
@@ -462,7 +456,6 @@ export function AppWrapper({children}: {
 
       } catch (error) {
         toast.error("fetchCart error");
-        console.log('fetchCart error:', error);
         return null;
       }
     };
@@ -476,7 +469,7 @@ export function AppWrapper({children}: {
           }
         }); 
       } catch (err: any) {
-        console.log("Unknown error");
+        toast.error("Unknown error");
       }
     }
 
@@ -496,7 +489,7 @@ export function AppWrapper({children}: {
         const data = await res.json();
         setOrders(data);
       } catch (err: any) {
-        console.log("Unknown error");
+        toast.error("Unknown error");
       }
     }
 
@@ -507,11 +500,11 @@ export function AppWrapper({children}: {
             if (res.ok) {
                 setWishlist(data.products);
             } else {
-                console.error(data.message);
+                console.log(data.message);
             }
             setWishlistDisplay(data.products.map((item: WishlistItem) => item.productId));
         } catch (error) {
-            console.error("Error fetching wishlist:", error);
+            console.log("Error fetching wishlist:", error);
         }
     }, []);
 
@@ -544,7 +537,7 @@ export function AppWrapper({children}: {
           toast.success("wishlist updated")
         }
       } catch (error) {
-        console.error("Error removing from wishlist:", error);
+        console.log("Error removing from wishlist:", error);
         toast.error("Error removing from wishlist:");
 
       }finally{
@@ -566,7 +559,7 @@ export function AppWrapper({children}: {
            const response = await fetch('/api/products') 
 
            if(!response.ok){
-            console.log('failed to fetch categories')
+            toast.error('failed to fetch categories')
            }
 
            const data = await response.json()

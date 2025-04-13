@@ -120,17 +120,17 @@ export default function SearchPage() {
               </div>
             </div>
             <div className="px-3 space-y-4">
-              <p className="max-w-sm">{currentProduct.name}</p>
+              <p className="max-w-sm">{currentProduct?.name}</p>
               <div className="flex items-center gap-5">
                 <span className="font-semibold text-md">
-                  {Number(currentProduct.discountedPrice || 0).toLocaleString("en-NG", {
+                  {Number(currentProduct?.discountedPrice || 0).toLocaleString("en-NG", {
                     style: "currency",
                     currency: "NGN",
                     minimumFractionDigits: 0,
                   })}
                 </span>
                 <span className="text-gray-400 line-through text-sm text-md">
-                  {Number(currentProduct.retailPrice || 0).toLocaleString("en-NG", {
+                  {Number(currentProduct?.retailPrice || 0).toLocaleString("en-NG", {
                     style: "currency",
                     currency: "NGN",
                     minimumFractionDigits: 0,

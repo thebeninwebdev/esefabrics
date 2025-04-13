@@ -3,12 +3,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Minus } from "lucide-react";
-import { VariationInterface, IProduct, CartItem, Variant } from '@/app/types';
+import { VariationInterface, IProduct, CartItem } from '@/app/types';
 import { useAppContext } from '@/context';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const VariationModal = ({variationsArray,currentProduct}:{variationsArray:VariationInterface[],currentProduct:IProduct}) => {
   const {isCartSelection, setIsCartSelection, addToCart, removeFromCart, cart} = useAppContext()
+  const router = useRouter()
   const {data:session} = useSession()
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({
     M: 0,
@@ -145,7 +147,7 @@ const VariationModal = ({variationsArray,currentProduct}:{variationsArray:Variat
           >
             Continue Shopping
           </Button>
-          <Button className='bg-primary text-text-dark hover:bg-primary-dark'>Go to Cart</Button>
+          <Button onClick={() => router.push('/cart')} className='bg-primary text-text-dark hover:bg-primary-dark'>Go to Cart</Button>
         </div>
       </DialogContent>
     </Dialog>

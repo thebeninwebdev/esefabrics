@@ -7,7 +7,7 @@ export const Variant = ({ subVariants, variantType }: { subVariants: string[], v
   return (
     <div className="flex gap-3 flex-wrap w-full py-2">
       {subVariants?.map((subVariant, idx: number) => {
-        const foundVariant = variants.find((variant:any) => variant.variant === subVariant)
+        const foundVariant = variants.find((variant:any) => variant.variant === subVariant[0])
         const isSelected = foundVariant
         const isSize = variantType === "size";
 
@@ -20,10 +20,10 @@ export const Variant = ({ subVariants, variantType }: { subVariants: string[], v
         return (
           <span
             key={idx}
-            onClick={() => addVariant({variantType,variant:subVariant})}
+            onClick={() => addVariant({variantType,variant:subVariant[0]})}
             className={`${baseClass} ${selectedClass} flex justify-center text-sm items-center cursor-pointer ease-in-out transition-colors duration-700 border hover:border-primary`}
           >
-            {subVariant.toUpperCase()}
+            {subVariant[0].toUpperCase()}
           </span>
         );
       })}

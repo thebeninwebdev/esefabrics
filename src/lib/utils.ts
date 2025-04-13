@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { GroupedVariant } from "@/app/types";
 import { CiBag1, CiDeliveryTruck, CiFileOn, CiMap, CiShoppingCart, CiTrash, CiUnlock, CiViewList } from "react-icons/ci";
-import { LogIn } from "lucide-react";
 
 type VariantItem = {
     variantType: string;
@@ -20,7 +19,7 @@ type VariantItem = {
       } else {
         acc.push({
           variantType: curr.variantType,
-          variants: [curr.subVariant[0]]
+          variants: [curr.subVariant]
         });
       }
   

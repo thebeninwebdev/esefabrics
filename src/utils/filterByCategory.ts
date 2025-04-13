@@ -28,6 +28,5 @@ const objects: CategoryObject[] = [
 const categories: string[] = ["clothing", "books"];
 
 const filtered = filterByCategory(objects, categories);
-console.log(filtered);
 
 export default filterByCategory;

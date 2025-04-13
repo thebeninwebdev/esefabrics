@@ -13,7 +13,6 @@ export default function ClothingCTA() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Here you would handle the form submission, like sending to an API
-    console.log('Submitted email:', email);
     // Reset form after submission
     setEmail('');
     // Show success message or trigger a toast notification

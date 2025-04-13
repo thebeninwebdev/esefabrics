@@ -15,23 +15,10 @@ import { useAppContext } from "@/context"
 export default function AccountPage() {
   // In a real app, you would fetch this data from your API
   const router = useRouter()
-  // const [user, setUser] = useState({
-  //   _id: "671e99d7d986b6e5168006e0",
-  //   name: "Eseosa Osayi",
-  //   email: "osayivictoryeseosa@gmail.com",
-  //   phone: "2349155276978",
-  //   created_at: new Date(1730058711661),
-  //   last_login: new Date(1744399735363),
-  //   username: "mrEseosa",
-  //   roles: ["89384938420"],
-  //   verified: true,
-  // })
   const { fetchUser, user } = useAppContext()
 
   useEffect(() => {
-    fetchUser().then(
-      console.log(user)
-    )
+    fetchUser()
   },[])
 
   // Format phone number for display
@@ -200,11 +187,11 @@ const calculateAccountAge = (createdAt: string) => {
                       <Shield className="h-4 w-4 mr-2" /> Account Role
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {user?.roles && user.roles.map((role:string) => (
-                        <Badge key={role} variant="secondary">
-                          {role === process.env.USER ? "Customer" : "Admin"}
+                      {user?.roles &&
+                        <Badge variant="secondary">
+                          {user?.roles.includes(process.env.USER) ? "Customer" : "Admin"}
                         </Badge>
-                      ))}
+                      }
                     </div>
                   </div>
                 </div>

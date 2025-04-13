@@ -11,8 +11,6 @@ export async function generateMetadata({ params }: any): Promise<Metadata> {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/products/product?id=${productId}`);
   const product = await res.json();
 
-  console.log(product)
-
   return {
     title: product.name,
     description: product.description,
