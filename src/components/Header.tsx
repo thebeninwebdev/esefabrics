@@ -11,10 +11,14 @@ import { useAppContext } from "@/context";
 import { Badge } from "./ui/badge";
 import { useSession, signOut } from "next-auth/react";
 import { LogOut, LogIn, Search } from "lucide-react";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export default function Header() {
   const {cart} = useAppContext()
   const {data:session} = useSession();
+
+  const isMobile = useMediaQuery("(max-width: 768px)")
+  const isTablet = useMediaQuery("(max-width: 1024px)")
   return (
     <div>
       <header className="h-16 text-[15px] fixed inset-0 flex-center bg-background dark:bg-background-dark bg- z-20 shadow-lg">
@@ -42,13 +46,13 @@ export default function Header() {
             >
               <ThemeSwitch/>
             </div>
-            <Link
+            {!isMobile && !isTablet &&<Link
               href="/search"
               aria-label="Search"
               className="bg-white/5 relative p-[.2rem] shadow rounded-full flex-center hidden lg:visible"
             >
               <Search/>
-            </Link>
+            </Link>}
             <Link href="/cart">
             <div
               aria-label="Shopping cart"
