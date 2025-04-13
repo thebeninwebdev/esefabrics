@@ -13,7 +13,6 @@ import { toast } from "sonner"
 import { useLoading } from "@/context/LoadingContext"
 import { useRouter } from "next/navigation"
 import ProductSkeleton from "@/components/skeleton/product-skeleton"
-import ThemeSwitch from "@/components/Themeswitch"
 
 export default function ProductComponent({ resolvedParams }: any) {
   const { products, fetchProducts, variations, setIsCartSelection, removeFromCart, addToCart, cart, fetchVariations } =
@@ -149,9 +148,6 @@ export default function ProductComponent({ resolvedParams }: any) {
   if (isProductLoading) {
     return (
       <>
-        <div className="fixed top-4 right-4 z-50">
-          <ThemeSwitch />
-        </div>
         <div className="animate-fadeIn px-5">
           <ProductSkeleton />
         </div>
@@ -161,9 +157,6 @@ export default function ProductComponent({ resolvedParams }: any) {
 
   return (
     <>
-      <div className="fixed top-4 right-4 z-50">
-        <ThemeSwitch />
-      </div>
       <div className="pt-10 max-w-7xl w-full mx-auto animate-fadeIn">
         {currentProduct && (
           <div className="md:grid grid-cols-2">

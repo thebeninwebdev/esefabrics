@@ -30,21 +30,20 @@ export default async function middleware(req: NextRequest) {
   }
 
   const userRoles = (token.roles as string[]) || [];
+  const cleanPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
 
   for (const route in protectedRoutes) {
-    if (pathname.startsWith(route)) {
+    if (cleanPathname.startsWith(route)) {
       const allowedRoles = protectedRoutes[route];
       const hasAccess = userRoles.some((role) => allowedRoles.includes(role));
-
+  
       if (!hasAccess) {
-        // If role mismatch, redirect to unauthorized page
         return NextResponse.redirect(new URL('/unauthorized', req.url));
       }
-
-      // If allowed, continue
       return NextResponse.next();
     }
   }
+  
 
   // If path doesn't match any protected route, allow by default
   return NextResponse.next();
