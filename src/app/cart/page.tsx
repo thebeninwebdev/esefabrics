@@ -5,12 +5,10 @@ import Link from 'next/link';
 import { useAppContext } from '@/context';
 import { CartItem, IProduct, VariationInterface } from '../types';
 import VariationModal from '@/components/VariationModal';
-import { useSession } from 'next-auth/react';
-import { ShoppingCart as ShoppingCartIcon, VariableIcon } from "lucide-react"
+import { ShoppingCart as ShoppingCartIcon } from "lucide-react"
 
 export default function CartPage() {
   const {cart, clearFromCart, variations, fetchProducts, fetchVariations, removeFromCart, setIsCartSelection, addToCart, products, currentProduct, setCurrentProduct} = useAppContext()
-  const {data:session} = useSession()
   const [productId, setProductId] = useState("")
 
   useEffect(() => {

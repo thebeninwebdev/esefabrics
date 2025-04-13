@@ -42,7 +42,7 @@ const BottomNav = () => {
             <CiSearch className="w-6 h-6" />
           )}
         </Link>
-        <Link href="/dashboard" className="flex items-center">
+        <Link href="/account-details" className="flex items-center">
           {isDashboardActive ? (
             <CiUser className="w-6 h-6" />
           ) : (

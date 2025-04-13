@@ -48,7 +48,7 @@ export function HomeSlider() {
             </div>
             
             <div className="space-y-3">
-            <Link href='/' className="underline text-sm lg:hidden">SHOP NOW</Link>
+            <Link href='/categories' className="underline text-sm lg:hidden">SHOP NOW</Link>
             <h2 className=" text-4xl md:text-6xl font-bold uppercase tracking-widest">
               {banners[index].text}
             </h2>
