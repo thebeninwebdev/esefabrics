@@ -85,7 +85,7 @@ export default function Home() {
         <div className="overflow-auto pt-8 w-full">
         <div className="flex w-max gap-3">
         {drawerId && currentProduct?.images?.map((image:IImage,index:number) => (
-          <div key={index} className="w-36 h-44 block bg-red-500 mt-8">
+          <div key={index} className="w-36 h-44 block mt-8">
           <img
             src={image.url}
             alt={image.id}
@@ -137,13 +137,13 @@ export default function Home() {
     </div>
     {group?.variantType === "size" && <SizeChart />}
     </div>
-<div className="flex flex-wrap gap-2 pt-3">
+    <div className="flex flex-wrap gap-2 pt-3">
                 {variations && variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.map((variation:any,idx:number) => (
                   <div key={idx} onClick={() => setIsCartSelection(true)} className="py-1 px-3 rounded-md border-primary border-2 dark:bg-primary-dark dark:text-text-dark text-text w-max">
                     {variation?.subVariant[0]?.toUpperCase()}
                   </div>
                 ))}
-                </div>
+    </div>
   </div>
  ))}
 {cart.find((item:CartItem) => item._id === currentProduct._id) ? (

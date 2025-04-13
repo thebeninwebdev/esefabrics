@@ -69,10 +69,11 @@ export default function Register() {
         setName("")
         setEmail("")
         setPassword("")
+        setPhoneNumuber("")
         setUsername("")
-        toast.success(data.message)
+        toast.success("Please check your email")
       } else {
-        toast.error(data.message)
+        toast.error("An error occured")
         setPassword("")
       }
     } catch (error) {

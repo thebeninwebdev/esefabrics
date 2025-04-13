@@ -76,7 +76,7 @@ export default function CategoryPage({params}: {params: Promise<{category: strin
         <div className="overflow-auto pt-8 w-full">
         <div className="flex w-max gap-3">
         {drawerId && currentProduct?.images?.map((image:IImage,index:number) => (
-          <div key={index} className="w-36 h-44 block bg-red-500 mt-8">
+          <div key={index} className="w-36 h-44 block mt-8">
           <img
             src={image.url}
             alt={image.id}

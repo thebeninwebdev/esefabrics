@@ -10,7 +10,8 @@ import Link from "next/link";
 import { useAppContext } from "@/context";
 import { Badge } from "./ui/badge";
 import { useSession, signOut } from "next-auth/react";
-import { LogOut, LogIn } from "lucide-react";
+import { LogOut, LogIn, Search } from "lucide-react";
+
 export default function Header() {
   const {cart} = useAppContext()
   const {data:session} = useSession();
@@ -41,6 +42,13 @@ export default function Header() {
             >
               <ThemeSwitch/>
             </div>
+            <Link
+              href="/search"
+              aria-label="Search"
+              className="bg-white/5 relative p-[.2rem] shadow rounded-full flex-center hidden lg:visible"
+            >
+              <Search/>
+            </Link>
             <Link href="/cart">
             <div
               aria-label="Shopping cart"

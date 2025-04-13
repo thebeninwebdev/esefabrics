@@ -469,7 +469,7 @@ export function AppWrapper({children}: {
           }
         }); 
       } catch (err: any) {
-        toast.error("Unknown error");
+        console.log("Unknown error");
       }
     }
 

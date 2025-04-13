@@ -109,7 +109,7 @@ export default function SearchPage() {
             <div className="overflow-auto pt-8 w-full">
               <div className="flex w-max gap-3">
                 {currentProduct.images?.map((image:IImage,index:number) => (
-                  <div key={index} className="w-36 h-44 block bg-red-500 mt-8">
+                  <div key={index} className="w-36 h-44 block mt-8">
                     <img
                       src={image.url}
                       alt={image.id}
@@ -154,7 +154,7 @@ export default function SearchPage() {
             </div>
             <div className="py-5 px-3 space-y-5">
             {
-                variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._i) &&
+                variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id) &&
               <div className="">
                 <div className="flex justify-between">
                   <div className="flex w-full">
@@ -165,9 +165,9 @@ export default function SearchPage() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-3">
-                {variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.map((variation:any,idx:number) => (
+                {variations && variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations?.map((variation:any,idx:number) => (
                   <div key={idx} onClick={() => setIsCartSelection(true)} className="py-1 px-3 rounded-md border-primary border-2 dark:bg-primary-dark dark:text-text-dark text-text w-max">
-                    {variation?.subVariant}
+                    {variation?.subVariant[0]?.toUpperCase()}
                   </div>
                 ))}
                 </div>
