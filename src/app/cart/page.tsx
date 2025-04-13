@@ -28,10 +28,10 @@ export default function CartPage() {
         <h1 className="text-3xl font-bold mb-6">Shopping cart</h1>
       </div>
       
-      {productId.length > 0 && <VariationModal
+      {products?.length > 0 && variations?.length> 0 && <VariationModal
        variationsArray={variations?.find((variation:VariationInterface) => variation?.reference_id === currentProduct?._id)?.variations} currentProduct={currentProduct as IProduct}
         />}
-      {cart.length > 0 ? (
+      {cart?.length > 0 ? (
         <>
           {/* Desktop view - Cart table header */}
           <div className="hidden md:grid grid-cols-12 gap-4 border-b pb-4 mb-4 font-medium">
