@@ -489,7 +489,7 @@ export function AppWrapper({children}: {
         const data = await res.json();
         setOrders(data);
       } catch (err: any) {
-        toast.error("Unknown error");
+        console.error("Unknown error");
       }
     }
 
